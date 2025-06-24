@@ -1,38 +1,37 @@
-.App {
-  text-align: center;
+/* src/App.css */
+
+/* We can import a font from Google Fonts for a more custom feel */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+
+/* We'll use this file for custom styles that go beyond Tailwind's utilities. */
+
+body {
+  /* Applying the font globally. We can still override it with Tailwind classes. */
+  font-family: 'Inter', sans-serif;
+  /* A slightly different base background color to make the page pop */
+  background-color: #0d1117;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* A custom animated gradient background for the hero section */
+.hero-gradient-bg {
+  background: linear-gradient(-45deg, #0d1117, #1c2b4d, #0d1117, #21262d);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Adding a subtle glow effect on card hover that complements the existing Tailwind shadow */
+.app-card:hover {
+   box-shadow: 0 0 20px rgba(0, 255, 255, 0.25), 0 0 8px rgba(0, 255, 255, 0.2);
 }

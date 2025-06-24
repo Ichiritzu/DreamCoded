@@ -1,24 +1,51 @@
 .navbar {
-  background-color: #7C3AED;
-  padding: 1rem 2rem;
+  background-color: rgba(31, 41, 55, 0.8); /* gray-800 with opacity */
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 0.75rem 0;
+}
+
+.navbar .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.navbar-title {
-  color: white;
-  margin: 0;
+.navbar-brand {
   font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
 }
 
 .navbar-links a {
-  color: white;
-  margin-left: 1.5rem;
+  color: var(--text-secondary);
   text-decoration: none;
-  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .navbar-links a:hover {
-  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+.button-primary {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.button-primary:hover {
+  background-color: var(--primary-hover);
 }

@@ -1,0 +1,41 @@
+.live-editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  background: #0b0f19;
+  color: white;
+}
+
+.code-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.code-inputs textarea {
+  flex: 1;
+  height: 150px;
+  background: #121826;
+  color: #fff;
+  font-family: monospace;
+  font-size: 0.9rem;
+  border: 1px solid #2c2f3a;
+  padding: 0.75rem;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.preview-pane {
+  height: 400px;
+  border: 1px solid #2c2f3a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.live-preview {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: none;
+}

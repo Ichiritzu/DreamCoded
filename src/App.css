@@ -1,37 +1,33 @@
-/* src/App.css */
-
-/* We can import a font from Google Fonts for a more custom feel */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
 
-/* We'll use this file for custom styles that go beyond Tailwind's utilities. */
+/* --- Global Styles & Variables --- */
+:root {
+  --primary-color: #2dd4bf; /* A vibrant cyan */
+  --primary-hover: #14b8a6;
+  --dark-bg: #0d1117;
+  --card-bg: #1f2937; /* A dark gray-blue */
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af; /* A light gray */
+}
 
 body {
-  /* Applying the font globally. We can still override it with Tailwind classes. */
+  margin: 0;
   font-family: 'Inter', sans-serif;
-  /* A slightly different base background color to make the page pop */
-  background-color: #0d1117;
+  background-color: var(--dark-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
 }
 
-/* A custom animated gradient background for the hero section */
-.hero-gradient-bg {
-  background: linear-gradient(-45deg, #0d1117, #1c2b4d, #0d1117, #21262d);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Adding a subtle glow effect on card hover that complements the existing Tailwind shadow */
-.app-card:hover {
-   box-shadow: 0 0 20px rgba(0, 255, 255, 0.25), 0 0 8px rgba(0, 255, 255, 0.2);
+main {
+  /* This ensures our main content area grows to push the footer down */
+  flex-grow: 1;
 }

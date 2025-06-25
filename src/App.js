@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import HomePage from './pages/HomePage/HomePage';
+import AuthForm from './components/AuthForm/AuthForm';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Routes>
             {/* This Route tells the app: when the URL is "/", render the HomePage component */}
             <Route path="/" element={<HomePage />} />
-            
+            <Route path="/auth" element={<AuthForm />} />
             {/* Later, we could add more pages like this: */}
             {/* <Route path="/submit" element={<SubmitPage />} /> */}
             {/* <Route path="/about" element={<AboutPage />} /> */}

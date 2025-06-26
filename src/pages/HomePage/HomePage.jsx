@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -14,7 +15,7 @@ const HomePage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err);
+        setError(err.message || 'Failed to fetch projects.');
         setLoading(false);
       });
   }, []);
@@ -39,12 +40,16 @@ const HomePage = () => {
           <div className="dc-empty">Be the first to submit something!</div>
         )}
         {!loading && !error && apps.map(app => (
-          <div className="dc-card" key={app.id}>
-            <img src={app.image_url} alt={app.title} loading="lazy" className="dc-img" />
+          // I've changed the structure slightly for better accessibility and styling.
+          <div className="dc-card-wrapper" key={app.id}>
+            <Link to={`/project/${app.id}`} className="dc-card-image-link">
+                <img src={app.image_url} alt={app.title} loading="lazy" className="dc-img" />
+            </Link>
             <div className="dc-card-body">
               <h3>{app.title}</h3>
               <div className="dc-meta">
-                <span>{app.author}</span>
+                {/* The author's name is now a link to their profile */}
+                <Link to={`/user/${app.author}`} className="dc-author-link">{app.author}</Link>
                 <span>❤️ {app.likes}</span>
                 <span>👁️ {app.views}</span>
               </div>

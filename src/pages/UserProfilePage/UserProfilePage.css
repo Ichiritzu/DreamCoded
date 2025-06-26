@@ -1,0 +1,107 @@
+.profile-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem;
+    background-color: var(--card-bg);
+    border-radius: 0.75rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.profile-avatar {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    border: 4px solid var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.profile-username {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.profile-name {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin: 0.25rem 0 0.5rem 0;
+}
+
+.profile-joined {
+    font-size: 0.9rem;
+    color: #6b7280; /* gray-500 */
+}
+
+.profile-gallery-container {
+    width: 100%;
+}
+
+.gallery-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    border-bottom: 2px solid #374151;
+    padding-bottom: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.profile-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.profile-app-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.profile-app-card {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    height: 220px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.profile-app-card:hover {
+    transform: scale(1.03);
+}
+
+.profile-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.profile-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+.no-projects-message {
+    text-align: center;
+    font-size: 1.25rem;
+    padding: 4rem 0;
+    color: var(--text-secondary);
+}

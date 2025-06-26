@@ -133,3 +133,42 @@
   background-color: rgba(34, 197, 94, 0.2);
   color: #86efac;
 }
+/* Add these styles to the top of your SubmitPage.css */
+
+.project-type-selector {
+  border-color: var(--primary-color);
+}
+
+.radio-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.radio-group label {
+  flex-grow: 1;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border: 2px solid #374151; /* gray-700 */
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.radio-group label:hover {
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+.radio-group label.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 0 15px rgba(45, 212, 191, 0.3);
+}
+
+.radio-group input[type="radio"] {
+  display: none; /* Hide the actual radio button */
+}

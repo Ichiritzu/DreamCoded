@@ -7,9 +7,10 @@ import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import HomePage from './pages/HomePage/HomePage';
 import SubmitPage from './pages/SubmitPage/SubmitPage';
-import AuthForm from './components/AuthForm/AuthForm'; // <-- Corrected path
+import AuthForm from './components/AuthForm/AuthForm';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import ProjectDetailPage from './pages/ProjectDetailPage/ProjectDetailPage';
+import UserProfilePage from './pages/UserProfilePage/UserProfilePage'; // <-- Import the new page
 
 function App() {
   return (
@@ -22,9 +23,10 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthForm />} />
+            <Route path="/project/:id" element={<ProjectDetailPage />} />
             
-            {/* The new route for the detail page. Notice the ':id' which is a dynamic parameter. */}
-            <Route path="/project/:id" element={<ProjectDetailPage />} /> 
+            {/* The new route for the user profile page. */}
+            <Route path="/user/:username" element={<UserProfilePage />} />
             
             {/* Protected Route */}
             <Route 

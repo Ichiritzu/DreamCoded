@@ -1,120 +1,192 @@
-:root {
-  --bg: #0b0f19;
-  --primary: #00f7ff;
-  --secondary: #a78bfa;
-  --card-bg: rgba(255, 255, 255, 0.04);
-  --text: #f0f0f0;
-  --radius: 14px;
-}
-
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
+/* =================================================================
+   1. Page Layout & Hero Section
+   ================================================================= */
 .dc-page {
-  padding: 1.5rem;
+  width: 100%;
 }
 
 .dc-hero {
+  padding: 4rem 1rem;
   text-align: center;
-  margin-bottom: 2rem;
-}
-.dc-title {
-  font-size: 2.5rem;
-  color: var(--primary);
-}
-.dc-sub {
-  font-size: 1.1rem;
-  opacity: 0.7;
+  background: linear-gradient(-45deg, #0d1117, #1c2b4d, #0d1117, #21262d);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
 }
 
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.dc-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.dc-sub {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* =================================================================
+   2. Filter Bar
+   ================================================================= */
 .dc-filters {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   justify-content: center;
-  margin-bottom: 1.5rem;
-}
-.dc-filter {
-  background: #121212;
-  border: 1px solid #333;
-  border-radius: var(--radius);
-  padding: 0.5rem 1rem;
-  color: var(--text);
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-.dc-filter:hover {
-  background: var(--primary);
-  color: #000;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  background-color: var(--dark-bg);
+  border-bottom: 1px solid #374151;
 }
 
+.dc-filter {
+  background-color: var(--card-bg);
+  color: var(--text-secondary);
+  border: 1px solid #374151;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-transform: capitalize;
+}
+
+.dc-filter:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.dc-filter.active {
+  background-color: var(--primary-color);
+  color: #111827;
+  border-color: var(--primary-color);
+}
+
+.filter-separator {
+  width: 2px;
+  align-self: center;
+  height: 20px;
+  background-color: #374151;
+  margin: 0 0.5rem;
+}
+
+
+/* =================================================================
+   3. Gallery & Cards
+   ================================================================= */
 .dc-gallery {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
-.dc-card {
-  background: var(--card-bg);
-  border: 1px solid #222;
-  border-radius: var(--radius);
+
+.dc-card-wrapper {
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
   overflow: hidden;
-  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
 }
-.dc-card:hover {
-  transform: translateY(-2px);
+.dc-card-wrapper:hover {
+    transform: translateY(-5px);
 }
+
+.dc-card-image-link {
+  display: block;
+  position: relative;
+  text-decoration: none;
+}
+
 .dc-img {
   width: 100%;
-  height: 160px;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
 }
-.dc-card-body {
+
+.card-tags-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   padding: 0.75rem;
-}
-.dc-card-body h3 {
-  font-size: 1rem;
-  margin: 0 0 0.5rem;
-}
-.dc-meta {
-  font-size: 0.75rem;
   display: flex;
-  justify-content: space-between;
-  color: #aaa;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
 }
 
-.dc-loading,
-.dc-error,
-.dc-empty {
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 1rem;
-  opacity: 0.8;
+.card-tag {
+  background-color: rgba(22, 22, 22, 0.7);
+  backdrop-filter: blur(4px);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: capitalize;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-.dc-card-link {
-  text-decoration: none;
-  color: inherit;
-  display: block; /* Ensures the link takes up the full card space for clicking */
+
+.card-tag:hover {
+  background-color: var(--primary-color);
+  color: #111827;
 }
-.dc-card-wrapper {
-    background-color: var(--card-bg); /* Or your card background color */
-    border-radius: 0.5rem;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+
+.dc-card-body {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dc-card-body h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+    color: var(--text-primary);
+}
+
+.dc-meta {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 
 .dc-author-link {
-  text-decoration: none;
-  color: inherit;
   font-weight: 700;
+  color: var(--text-secondary);
+  text-decoration: none;
   transition: color 0.2s ease;
 }
-
 .dc-author-link:hover {
-    color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+
+/* =================================================================
+   4. Utility & Message Styles
+   ================================================================= */
+.dc-loading, .dc-error, .dc-empty {
+  grid-column: 1 / -1; /* Make message span all columns */
+  text-align: center;
+  padding: 4rem 1rem;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
 }

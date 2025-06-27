@@ -15,7 +15,6 @@ const AppCard = ({ app }) => (
 );
 
 const UserProfilePage = () => {
-    // useParams gets the dynamic part of the URL, in this case, the username.
     const { username } = useParams();
 
     const [profileData, setProfileData] = useState(null);
@@ -23,8 +22,8 @@ const UserProfilePage = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Fetch the user profile data when the component loads or the username changes.
-        fetch(`https://dreamcoded.com/api/user.php?username=${username}`)
+        // FIX: Add a unique timestamp to the URL to bypass any server-side or browser caching.
+        fetch(`https://dreamcoded.com/api/user.php?username=${username}&t=${Date.now()}`)
             .then(res => {
                 if (!res.ok) throw new Error('User not found');
                 return res.json();

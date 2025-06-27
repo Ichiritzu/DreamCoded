@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
-
 import { dracula } from '@uiw/codemirror-theme-dracula';
 import { materialDark } from '@uiw/codemirror-theme-material';
 import { githubDark } from '@uiw/codemirror-theme-github';
-
+import { useMessage } from '../../context/MessageContext';
 import './ProjectDetailPage.css';
 
+// Helper function to call the interaction API
 const sendInteraction = (projectId, action, userId) => {
   const payload = { project_id: projectId, action };
   if (userId) payload.user_id = userId;
@@ -26,6 +26,9 @@ const sendInteraction = (projectId, action, userId) => {
 
 const ProjectDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { showMessage } = useMessage();
+  
   const loggedInUser = useMemo(() => {
     const storedUser = localStorage.getItem('dreamcodedUser');
     return storedUser ? JSON.parse(storedUser) : null;
@@ -40,8 +43,11 @@ const ProjectDetailPage = () => {
   const [liked, setLiked] = useState(false);
   const [totalLikes, setTotalLikes] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState('');
-  const [editorTheme, setEditorTheme] = useState('dracula');
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  const [editorTheme, setEditorTheme] = useState(
+    () => localStorage.getItem('dreamcoded_editor_theme') || 'dracula'
+  );
 
   const themeMap = {
     dracula: dracula,
@@ -82,7 +88,7 @@ const ProjectDetailPage = () => {
   };
 
   const handleLikeToggle = () => {
-    if (!loggedInUser) return alert("Please log in to like this project.");
+    if (!loggedInUser) return showMessage("Please log in to like this project.", "error");
     const newLiked = !liked;
     const action = newLiked ? 'like' : 'unlike';
     setLiked(newLiked);
@@ -97,11 +103,9 @@ const ProjectDetailPage = () => {
 
   const handleSave = async () => {
     if (!loggedInUser) {
-      setSaveMessage('You must be logged in to save.');
-      return;
+      return showMessage('You must be logged in to save.', 'error');
     }
     setIsSaving(true);
-    setSaveMessage('');
     const payload = {
       project_id: project.id,
       user_id: loggedInUser.id,
@@ -116,14 +120,48 @@ const ProjectDetailPage = () => {
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      setSaveMessage(data.message);
-      setTimeout(() => setSaveMessage(''), 3000);
+      showMessage(data.message, data.status);
     } catch (err) {
-      setSaveMessage('An error occurred while saving.');
+      showMessage('An error occurred while saving.', 'error');
       console.error('Save error:', err);
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to permanently delete this project? This action cannot be undone.")) {
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      const response = await fetch('https://dreamcoded.com/api/delete.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: project.id,
+          user_id: loggedInUser.id
+        })
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        showMessage('Project deleted successfully!', 'success');
+        setTimeout(() => navigate('/'), 500);
+      } else {
+        showMessage(data.message, 'error');
+      }
+    } catch (err) {
+      showMessage('An error occurred while deleting the project.', 'error');
+      console.error('Delete error:', err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleThemeChange = (e) => {
+    const newTheme = e.target.value;
+    setEditorTheme(newTheme);
+    localStorage.setItem('dreamcoded_editor_theme', newTheme);
   };
 
   const createIframeContent = () =>
@@ -164,22 +202,25 @@ const ProjectDetailPage = () => {
         </div>
         <div className="actions-section">
           {isOwner && (
-            <button onClick={handleSave} disabled={isSaving} className="header-button save-btn">
-              {isSaving ? 'Saving...' : 'Save'}
-            </button>
+            <>
+              <button onClick={handleSave} disabled={isSaving || isDeleting} className="header-button save-btn">
+                {isSaving ? 'Saving...' : 'Save'}
+              </button>
+              <button onClick={handleDelete} disabled={isSaving || isDeleting} className="header-button delete-btn">
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </>
           )}
-          <button onClick={handleLikeToggle} className={`header-button like-btn ${liked ? 'liked' : ''}`}>
+          <button onClick={handleLikeToggle} disabled={isDeleting} className={`header-button like-btn ${liked ? 'liked' : ''}`}>
             {liked ? 'Unlike' : 'Like'}
           </button>
-          {isSaving && <span className="save-message">Saving...</span>}
-          {saveMessage && !isSaving && <span className="save-message">{saveMessage}</span>}
           <div className="theme-select-wrapper">
             <label htmlFor="theme-select" className="theme-label">Theme:</label>
             <select
               id="theme-select"
               className="theme-select"
               value={editorTheme}
-              onChange={(e) => setEditorTheme(e.target.value)}
+              onChange={handleThemeChange}
             >
               <option value="dracula">Dracula</option>
               <option value="material">Material</option>
@@ -201,6 +242,7 @@ const ProjectDetailPage = () => {
                   theme={themeMap[editorTheme]}
                   extensions={[html()]}
                   onChange={(v) => handleCodeChange(v, 'html')}
+                  basicSetup={{ lineNumbers: true, foldGutter: true }}
                 />
               </div>
             </Panel>
@@ -214,6 +256,7 @@ const ProjectDetailPage = () => {
                   theme={themeMap[editorTheme]}
                   extensions={[css()]}
                   onChange={(v) => handleCodeChange(v, 'css')}
+                  basicSetup={{ lineNumbers: true, foldGutter: true }}
                 />
               </div>
             </Panel>
@@ -227,6 +270,7 @@ const ProjectDetailPage = () => {
                   theme={themeMap[editorTheme]}
                   extensions={[javascript()]}
                   onChange={(v) => handleCodeChange(v, 'js')}
+                  basicSetup={{ lineNumbers: true, foldGutter: true }}
                 />
               </div>
             </Panel>

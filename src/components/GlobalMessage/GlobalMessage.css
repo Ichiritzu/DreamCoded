@@ -1,0 +1,56 @@
+.global-message-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  /* FIX: Increased z-index to a very high number to ensure it's on top */
+  z-index: 9999;
+  animation: slideIn 0.3s ease-out;
+}
+
+.global-message-container.success {
+  background-color: #16a34a; /* Green for success */
+  border-left: 5px solid #4ade80;
+}
+
+.global-message-container.error {
+  background-color: #dc2626; /* Red for error */
+  border-left: 5px solid #f87171;
+}
+
+.global-message-container p {
+  margin: 0;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

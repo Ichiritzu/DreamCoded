@@ -2,12 +2,13 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Import the new Message Provider and Component
+// Import the Message Provider and Component
 import { MessageProvider } from './context/MessageContext';
 import GlobalMessage from './components/GlobalMessage/GlobalMessage';
 
-// Import all your existing page and layout components
-import Navbar from './components/Navbar/Navbar';
+// Import all page and layout components
+import Sidebar from './components/Sidebar/Sidebar'; // Renamed from Navbar
+import Header from './components/Header/Header';   // Your new Header component
 import Footer from './components/Footer/Footer';
 import HomePage from './pages/HomePage/HomePage';
 import SubmitPage from './pages/SubmitPage/SubmitPage';
@@ -15,38 +16,51 @@ import AuthForm from './components/AuthForm/AuthForm';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import ProjectDetailPage from './pages/ProjectDetailPage/ProjectDetailPage';
 import UserProfilePage from './pages/UserProfilePage/UserProfilePage';
+import SearchResultsPage from './pages/SearchResultsPage/SearchResultsPage';
+import SettingsPage from './pages/SettingsPage/SettingsPage';
 
 function App() {
   return (
-    // 1. MessageProvider wraps the entire application to provide global state.
     <MessageProvider>
       <Router>
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          {/* 2. GlobalMessage is rendered at the top level to appear over any page. */}
+        {/* The new top-level layout container with the correct class */}
+        <div className="app-layout">
           <GlobalMessage />
-          <Navbar />
+          <Sidebar />
           
-          <main style={{ flexGrow: 1 }}>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/auth" element={<AuthForm />} />
-              <Route path="/project/:id" element={<ProjectDetailPage />} />
-              <Route path="/user/:username" element={<UserProfilePage />} />
-              
-              {/* Protected Route */}
-              <Route 
-                path="/submit" 
-                element={
-                  <ProtectedRoute>
-                    <SubmitPage />
-                  </ProtectedRoute>
-                } 
-              />
-            </Routes>
-          </main>
-          
-          <Footer />
+          <div className="main-content-wrapper">
+            <Header />
+            <main className="page-content">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/auth" element={<AuthForm />} />
+                <Route path="/project/:id" element={<ProjectDetailPage />} />
+                <Route path="/user/:username" element={<UserProfilePage />} />
+                <Route path="/search" element={<SearchResultsPage />} /> 
+                
+                {/* Protected Routes */}
+                <Route 
+                  path="/submit" 
+                  element={
+                    <ProtectedRoute>
+                      <SubmitPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/settings" 
+                  element={
+                    <ProtectedRoute>
+                      <SettingsPage />
+                    </ProtectedRoute>
+                  } 
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+
         </div>
       </Router>
     </MessageProvider>

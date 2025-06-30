@@ -2,32 +2,78 @@
 
 /* --- Global Styles & Variables --- */
 :root {
-  --primary-color: #2dd4bf; /* A vibrant cyan */
-  --primary-hover: #14b8a6;
+  --primary-color: #8b5cf6;
+  --primary-hover: #7c3aed;
   --dark-bg: #0d1117;
-  --card-bg: #1f2937; /* A dark gray-blue */
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af; /* A light gray */
+  --card-bg: #161b22;
+  --border-color: #30363d;
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+}
+
+/* --- Base Body Styles --- */
+/* This prevents the main browser window from ever showing a scrollbar */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; 
+  height: 100%;
 }
 
 body {
-  margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: var(--dark-bg);
   color: var(--text-primary);
-  min-height: 100vh;
 }
 
+/* --- Main App Layout --- */
+/* This rule is the key: it puts the sidebar and main content side-by-side */
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
+
+/* This wrapper will take up all remaining space and handle its own scrolling */
+.main-content-wrapper {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto; 
+}
+
+/* This makes sure your page content fills the space and pushes the footer down */
+.page-content {
+  flex: 1;
+}
+
+/* A general-purpose container for consistent padding and max-width on pages */
 .container {
   width: 100%;
   max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding: 1.5rem;
 }
 
-main {
-  /* This ensures our main content area grows to push the footer down */
-  flex-grow: 1;
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+  /* On mobile, we let the body scroll normally again */
+  html, body {
+    height: auto;
+    overflow: auto;
+    overflow-x: hidden; /* Still prevent horizontal scroll */
+  }
+  
+  /* Stack the layout vertically */
+  .app-layout {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .main-content-wrapper {
+    height: auto;
+    overflow-y: visible; /* Disable the wrapper's scrollbar */
+    padding-bottom: 80px; /* Make space for the bottom nav bar */
+  }
 }

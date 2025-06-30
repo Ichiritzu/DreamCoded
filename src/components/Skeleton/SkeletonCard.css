@@ -1,0 +1,42 @@
+/* Skeleton image wrapper matches .dc-img layout */
+.skeleton-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #2c2c2c;
+}
+
+/* Optional: smooth transition when real content replaces it */
+.dc-card-wrapper {
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dc-card-body {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dc-meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}

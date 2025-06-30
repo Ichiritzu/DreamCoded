@@ -1,0 +1,127 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This will push user container to the right */
+  padding: 0.75rem 1.5rem;
+  background-color: var(--dark-bg);
+  flex-shrink: 0;
+  height: 60px; /* Give the header a fixed height */
+  box-sizing: border-box;
+}
+
+.header-title-container h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header-user-container {
+  position: relative;
+}
+
+/* --- Profile Dropdown --- */
+.profile-dropdown-wrapper {
+  position: relative;
+}
+
+.profile-trigger-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.user-avatar-header {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.profile-trigger-btn:hover .user-avatar-header {
+  border-color: var(--primary-color);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 250px;
+  background-color: var(--card-bg);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.user-avatar-dropdown {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+.user-details-dropdown {
+  display: flex;
+  flex-direction: column;
+}
+.user-name-dropdown {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.username-dropdown {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.dropdown-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.dropdown-item:hover {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: var(--primary-color);
+}
+.dropdown-item.logout {
+  color: #f87171; /* Red for destructive actions */
+}
+.dropdown-item.logout:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* --- Sign In Button --- */
+.signin-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 700;
+    transition: background-color 0.2s ease;
+}
+
+.signin-button:hover {
+    background-color: var(--primary-hover);
+}

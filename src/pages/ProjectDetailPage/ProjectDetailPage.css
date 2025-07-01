@@ -42,6 +42,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
+  object-fit: contain;
 }
 
 .author-name-link {
@@ -237,4 +238,138 @@
 }
 .cm-editor {
   overflow-y: auto;
+}
+/* ================================================================= 
+   6. Mobile View & Responsiveness 
+   ================================================================= */
+
+/* Mobile tab styles */
+.mobile-view-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.mobile-tabs {
+  display: flex;
+  background-color: #1a1a1a;
+  border-bottom: 2px solid #374151;
+  flex-shrink: 0;
+}
+
+.mobile-tabs button {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.mobile-tabs button:hover {
+  background-color: #374151;
+}
+
+.mobile-tabs button.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.mobile-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: #1e1e1e;
+}
+
+/* Responsive adjustments for the header */
+@media (max-width: 767px) {
+  .project-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .project-title {
+    font-size: 1.1rem;
+  }
+
+  .stats-section,
+  .actions-section {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .actions-section {
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .header-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .theme-select-wrapper {
+     /* Push theme selector to the right */
+  }
+
+  .author-section {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-header {
+    padding: 0.5rem;
+  }
+
+  .stats-section {
+    gap: 0.75rem;
+  }
+
+  .header-button {
+    flex-grow: 1; /* Make buttons take equal space */
+    text-align: center;
+  }
+  .theme-select-wrapper {
+    display: none; 
+  }
+}
+.mobile-settings-pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--text-primary);
+  height: 100%;
+}
+
+.mobile-settings-pane .theme-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobile-settings-pane .theme-label {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.mobile-settings-pane .theme-select {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  min-width: 200px;
+}
+
+.mobile-tabs button:last-child {
+  flex: 0.5; /* Make the settings icon tab smaller */
 }

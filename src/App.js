@@ -7,8 +7,8 @@ import { MessageProvider } from './context/MessageContext';
 import GlobalMessage from './components/GlobalMessage/GlobalMessage';
 
 // Import all page and layout components
-import Sidebar from './components/Sidebar/Sidebar'; // Renamed from Navbar
-import Header from './components/Header/Header';   // Your new Header component
+import Sidebar from './components/Sidebar/Sidebar';
+import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import HomePage from './pages/HomePage/HomePage';
 import SubmitPage from './pages/SubmitPage/SubmitPage';
@@ -18,12 +18,13 @@ import ProjectDetailPage from './pages/ProjectDetailPage/ProjectDetailPage';
 import UserProfilePage from './pages/UserProfilePage/UserProfilePage';
 import SearchResultsPage from './pages/SearchResultsPage/SearchResultsPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
+// NEW: Import the ResetPasswordPage
+import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
 
 function App() {
   return (
     <MessageProvider>
       <Router>
-        {/* The new top-level layout container with the correct class */}
         <div className="app-layout">
           <GlobalMessage />
           <Sidebar />
@@ -37,7 +38,10 @@ function App() {
                 <Route path="/auth" element={<AuthForm />} />
                 <Route path="/project/:id" element={<ProjectDetailPage />} />
                 <Route path="/user/:username" element={<UserProfilePage />} />
-                <Route path="/search" element={<SearchResultsPage />} /> 
+                <Route path="/search" element={<SearchResultsPage />} />
+                
+                {/* NEW: Route for handling password reset links */}
+                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
                 
                 {/* Protected Routes */}
                 <Route 

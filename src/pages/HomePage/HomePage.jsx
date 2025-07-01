@@ -1,80 +1,111 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import './HomePage.css';
 import SkeletonCard from '../../components/Skeleton/SkeletonCard';
 
-const HomePage = () => {
-  const [apps, setApps] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(0);
+const CarouselRow = ({ title, filter }) => {
+    const [apps, setApps] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showSkeletons, setShowSkeletons] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    fetch(`https://dreamcoded.com/api.php?limit=12&filter=trending&t=${Date.now()}`)
-      .then(res => res.ok ? res.json() : Promise.reject('Error'))
-      .then(data => {
-        setApps(data.projects || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    useEffect(() => {
+        setLoading(true);
+        setShowSkeletons(false);
+        const skeletonTimeout = setTimeout(() => setShowSkeletons(true), 200);
 
-  const prev = () => setActiveIndex(i => (i > 0 ? i - 1 : i));
-  const next = () => setActiveIndex(i => (i < apps.length - 1 ? i + 1 : i));
+        const apiUrl = `https://dreamcoded.com/api.php?limit=12&filter=${filter}&t=${Date.now()}`;
 
-  return (
-    <div className="dc-page">
-      <section className="dc-hero">
-        <h1 className="dc-title">DreamCoded</h1>
-        <p className="dc-sub">Where digital dreams become interactive reality.</p>
-      </section>
-
-      <div className="carousel-wrapper">
-        <button className="carousel-nav left" onClick={prev} disabled={activeIndex === 0}>
-          ‹
-        </button>
-        <div className="carousel-track">
-          {loading ? (
-            Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
-          ) : (
-            apps.map((app, i) => {
-              const position =
-                i === activeIndex ? 'active' :
-                i === activeIndex - 1 || i === activeIndex + 1 ? 'faded' : 'hidden';
-
-              return (
-                <div className={`carousel-item ${position}`} key={app.id}>
-                  <div className="dc-card-wrapper">
-                    <Link to={`/project/${app.id}`} className="dc-card-image-link">
-                      <img src={app.image_url} alt={app.title} className="dc-img" />
-                      {app.tags && (
-                        <div className="card-tags-overlay">
-                          {app.tags.split(',').slice(0, 2).map(tag => (
-                            <span key={tag} className="card-tag">{tag}</span>
-                          ))}
-                        </div>
-                      )}
-                    </Link>
-                    <div className="dc-card-body">
-                      <h3>{app.title}</h3>
-                      <div className="dc-meta">
-                        <Link to={`/user/${app.author}`} className="dc-author-link">{app.author}</Link>
-                        <span>❤️ {app.total_likes}</span>
-                        <span>👁️ {app.total_views}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
+        fetch(apiUrl)
+            .then((res) => (res.ok ? res.json() : Promise.reject('Network error')))
+            .then((data) => {
+                setApps(data.projects || []);
+                setLoading(false);
             })
-          )}
+            .catch(() => setLoading(false));
+            
+        return () => clearTimeout(skeletonTimeout);
+    }, [filter]);
+
+    const getAvatarSrc = (app) => {
+        if (app.author_avatar_url) {
+            return `https://dreamcoded.com${app.author_avatar_url}?v=${Date.now()}`;
+        } else {
+            return `https://ui-avatars.com/api/?name=${app.author}&background=161b22&color=c9d1d9&size=24`;
+        }
+    };
+
+    return (
+        <section className="carousel-section-wrapper">
+            <h2 className="carousel-section-title">{title}</h2>
+            <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={30}
+                slidesPerView={1.25}
+                centeredSlides={true}
+                pagination={{ clickable: true }}
+                navigation={true}
+                breakpoints={{
+                    768: { slidesPerView: 3, spaceBetween: 20, centeredSlides: false },
+                    1024: { slidesPerView: 3, spaceBetween: 30, centeredSlides: false },
+                }}
+                className="mySwiper"
+            >
+                {loading && showSkeletons && 
+                    Array.from({ length: 5 }).map((_, idx) => (
+                        <SwiperSlide key={idx}><SkeletonCard /></SwiperSlide>
+                    ))
+                }
+
+                {!loading && apps.map((app) => (
+                    <SwiperSlide key={app.id}>
+                        <div className="carousel-card-wrapper">
+                            <Link to={`/project/${app.id}`} className="carousel-card-link">
+                                <img src={app.image_url} alt={app.title} loading="lazy" className="carousel-card-img" />
+                                <div className="carousel-card-overlay">
+                                    <h3>{app.title}</h3>
+                                </div>
+                            </Link>
+                            <div className="carousel-card-meta">
+                                <Link to={`/user/${app.author}`} className="carousel-author-link">
+                                    <img 
+                                        src={getAvatarSrc(app)} 
+                                        alt={app.author} 
+                                        className="carousel-author-avatar"
+                                    />
+                                    {app.author}
+                                </Link>
+                                <div className="carousel-stats">
+                                    <span>❤️ {app.total_likes}</span>
+                                    <span>👁️ {app.total_views}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </SwiperSlide>
+                ))}
+            </Swiper>
+        </section>
+    );
+};
+
+const HomePage = () => {
+    return (
+        <div className="dc-page">
+            <section className="dc-hero">
+                <h1 className="dc-title">DreamCoded</h1>
+                <p className="dc-sub">Where digital dreams become interactive reality.</p>
+            </section>
+            
+            <div className="page-content-wrapper">
+                <CarouselRow title="Trending Projects" filter="trending" />
+                <CarouselRow title="Newest Submissions" filter="newest" />
+            </div>
         </div>
-        <button className="carousel-nav right" onClick={next} disabled={activeIndex === apps.length - 1}>
-          ›
-        </button>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default HomePage;

@@ -223,8 +223,8 @@
 .result-item img {
     width: 40px;
     height: 40px;
-    border-radius: 0.25rem;
-    object-fit: cover;
+    border-radius: 50%;
+    object-fit: contain;
     background-color: #30363d;
 }
 .result-item span {

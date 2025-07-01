@@ -1,13 +1,41 @@
 .header-container {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* This will push user container to the right */
+  justify-content: space-between;
   padding: 0.75rem 1.5rem;
-  background-color: var(--dark-bg);
-  flex-shrink: 0;
-  height: 60px; /* Give the header a fixed height */
-  box-sizing: border-box;
+  height: 2%;
+  backdrop-filter: blur(10px);
+  background-color: rgba(21, 24, 35, 0.6); /* semi-transparent dark */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
+
+/* Animated glowing border strip at the bottom */
+.header-container::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(270deg, #0fffc1, #7e0fff, #0fffc1);
+  background-size: 200% 200%;
+  animation: animateGlow 8s ease infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes animateGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+
 
 .header-title-container h2 {
   font-size: 1.5rem;
@@ -32,10 +60,10 @@
 }
 
 .user-avatar-header {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
   border: 2px solid transparent;
   transition: border-color 0.2s;
 }
@@ -68,6 +96,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
+  object-fit: contain;
 }
 .user-details-dropdown {
   display: flex;

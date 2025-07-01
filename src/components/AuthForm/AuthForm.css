@@ -1,58 +1,240 @@
+/* === AuthForm Redesign for DreamCoded === */
+
+/* 1. Main Container: A centered, floating card */
 .auth-container {
-  max-width: 400px;
-  margin: 3rem auto;
-  padding: 2rem;
-  background: #111;
-  border: 1px solid #444;
-  border-radius: 12px;
-  color: white;
+    max-width: 450px;
+    margin: 4rem auto; /* Centers the form and adds space from the top */
+    background-color: rgba(22, 27, 34, 0.8); /* Matches search modal */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
 }
 
+/* 2. Glowing Gradient Border Effect (like the header) */
+.auth-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #3b82f6, #0fffc1, #8b5cf6);
+    background-size: 300% 300%;
+    animation: animateGlow 8s ease infinite;
+}
+
+@keyframes animateGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 3. Title (matches homepage hero) */
+.auth-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+
+/* 4. Login/Register Toggle Tabs */
 .auth-toggle {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    padding: 4px;
+    margin-bottom: 1.5rem;
 }
 
 .auth-toggle button {
-  padding: 0.5rem 1.5rem;
-  background: #222;
-  border: 1px solid #555;
-  color: white;
-  cursor: pointer;
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    background-color: transparent;
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.auth-toggle .active {
-  background: #5f27cd;
-  border-color: #5f27cd;
+.auth-toggle button:hover {
+    color: var(--text-primary);
 }
 
+.auth-toggle button.active {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+/* 5. Form & Inputs */
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
 }
 
 .auth-form input {
-  padding: 0.5rem;
-  background: #222;
-  border: 1px solid #555;
-  color: white;
-  border-radius: 6px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 3rem; /* Left padding for icon */
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.auth-form button {
-  padding: 0.5rem;
-  background: #5f27cd;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 6px;
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
+/* 6. Submit Button */
+.auth-form button[type="submit"] {
+    padding: 0.85rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+}
+
+.auth-form button[type="submit"]:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+}
+
+/* 7. Messages & Resend Button */
 .auth-message {
-  margin-top: 1rem;
-  text-align: center;
-  color: #f39c12;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+}
+
+.resend-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.resend-button {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.resend-button:hover:not(:disabled) {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.resend-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Logged In View */
+.logged-in-message {
+    text-align: center;
+}
+
+.logged-in-message p {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.logged-in-message button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #ef4444; /* Red for logout */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.logged-in-message button:hover {
+    background-color: #dc2626;
+}
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto; /* Center the spinner inside the button */
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.forgot-password-link {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.forgot-password-link button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.forgot-password-link button:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
 }

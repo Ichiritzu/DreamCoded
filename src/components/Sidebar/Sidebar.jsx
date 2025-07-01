@@ -71,12 +71,23 @@ const SearchModal = ({ isOpen, onClose }) => {
 
     switch (searchType) {
         case 'users':
-            return results.map(user => (
-                <div key={user.id} className="result-item user-result" onClick={() => handleResultClick(`/user/${user.username}`)}>
-                    <img src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=161b22&color=c9d1d9`} alt={user.username} />
-                    <span>{user.first_name} {user.last_name} (@{user.username})</span>
-                </div>
-            ));
+          return results.map(user => (
+            <div
+              key={user.id}
+              className="result-item user-result"
+              onClick={() => handleResultClick(`/user/${user.username}`)}
+            >
+              <img
+                src={
+                  user.avatar_url
+                    ? `https://dreamcoded.com${user.avatar_url}?v=${Date.now()}`
+                    : `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=161b22&color=c9d1d9`
+                }
+                alt={user.username}
+              />
+              <span>{user.first_name} {user.last_name} (@{user.username})</span>
+            </div>
+          ));
         case 'tags':
             // We would need to update the homepage to handle a /tag/:tagName route
             return results.map(tag => (

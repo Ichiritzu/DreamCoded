@@ -1,170 +1,170 @@
-/* === Base Layout === */
+/* Import Swiper's core styles */
+@import 'swiper/css';
+
+/* =================================================================
+   1. Page Layout & Hero Section
+   ================================================================= */
 .dc-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  width: 100%;
 }
-
+.page-content-wrapper {
+    margin: 0 auto;
+    padding: 1rem 0;
+    width: 60%;
+}
 .dc-hero {
+  padding: 4rem 1.5rem;
   text-align: center;
-  margin-bottom: 2rem;
 }
-
 .dc-title {
-  font-size: 3rem;
-  font-weight: bold;
-  color: var(--primary);
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-
 .dc-sub {
-  font-size: 1.2rem;
-  color: var(--text-light);
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* === Carousel Container === */
-.carousel-wrapper {
-  position: relative;
-  overflow: hidden;
-  padding: 2rem 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* =================================================================
+   2. NEW Carousel Row Layout
+   ================================================================= */
+.carousel-section-wrapper {
+  padding: 2.5rem 0;
 }
 
-.carousel-track {
-  display: flex;
-  gap: 2rem;
-  transition: transform 0.4s ease-in-out;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  max-width: 100%;
+.carousel-section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    padding: 0 1.5rem 1.5rem;
+    margin: 0;
 }
 
-/* === Carousel Items === */
-.carousel-item {
-  flex: 0 0 300px;
-  transition: all 0.4s ease;
-  transform-origin: center center;
-  opacity: 0;
-  transform: scale(0.8);
-  pointer-events: none;
-  display: none;
+.mySwiper {
+    padding: 0.5rem 1.5rem 2.5rem !important; /* Add padding and space for pagination */
 }
 
-.carousel-item.active {
-  display: block;
-  opacity: 1;
-  transform: scale(1.05);
-  pointer-events: auto;
-  z-index: 3;
-}
-
-.carousel-item.faded {
-  display: block;
-  opacity: 0.5;
-  transform: scale(0.95);
-  z-index: 2;
-}
-
-.carousel-item.hidden {
-  display: none;
-}
-
-/* === Navigation Arrows === */
-.carousel-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--primary);
-  border: none;
-  cursor: pointer;
-  z-index: 10;
-  padding: 0.5rem 1rem;
-  transition: opacity 0.2s ease;
-}
-.carousel-nav:disabled {
-  opacity: 0.2;
-  cursor: not-allowed;
-}
-.carousel-nav.left { left: 1rem; }
-.carousel-nav.right { right: 1rem; }
-
-/* === Card Styling (Preserved) === */
-.dc-card-wrapper {
-  background: var(--card-bg);
-  border-radius: 12px;
-  overflow: hidden;
+/* =================================================================
+   3. Carousel Cards
+   ================================================================= */
+.carousel-card-wrapper {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  height: 100%;
 }
 
-.dc-card-image-link {
+.carousel-card-link {
   display: block;
   position: relative;
+  text-decoration: none;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-grow: 1;
+}
+.carousel-card-link:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
-.dc-img {
+.carousel-card-img {
   width: 100%;
-  height: 180px;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
+  background-color: #2e3440;
+  display: block;
 }
 
-.dc-card-body {
-  padding: 1rem;
-  text-align: center;
-  color: var(--text);
-}
-
-.dc-meta {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.card-tags-overlay {
+.carousel-card-overlay {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.card-tag {
-  background: var(--primary);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem 1rem 1rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
   color: white;
-  font-size: 0.7rem;
-  padding: 3px 6px;
-  border-radius: 4px;
+}
+.carousel-card-overlay h3 {
+    margin: 0;
+    font-size: 1.25rem;
 }
 
-/* === Responsive Fixes === */
-@media (max-width: 768px) {
-  .dc-title {
-    font-size: 2.2rem;
-  }
+.carousel-card-meta {
+  padding-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .dc-sub {
-    font-size: 1rem;
-  }
+.carousel-author-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.carousel-author-link:hover {
+  color: var(--text-primary);
+}
 
-  .carousel-track {
-    flex-direction: column;
-  }
+.carousel-author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: contain;
+}
 
-  .carousel-item {
-    flex: 0 0 100%;
-  }
+.carousel-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
 
-  .dc-meta {
-    font-size: 0.8rem;
-    flex-direction: column;
-    align-items: center;
-  }
+/* =================================================================
+   4. Custom Swiper Arrow & Pagination Styles
+   ================================================================= */
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--primary-color) !important;
+    background-color: rgba(22, 27, 34, 0.8);
+    backdrop-filter: blur(5px);
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+}
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+}
+
+.swiper-pagination-bullet {
+    background: var(--text-secondary) !important;
+}
+.swiper-pagination-bullet-active {
+    background: var(--primary-color) !important;
+}
+
+/* =================================================================
+   5. Utility & Messages
+   ================================================================= */
+.dc-error, .dc-empty {
+  width: 100%;
+  text-align: center;
+  padding: 4rem 1rem;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
 }

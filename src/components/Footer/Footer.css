@@ -1,5 +1,6 @@
 .footer {
   background-color: var(--dark-bg);
+  margin: 0 auto;
   margin-top: 3rem;
   padding: 2rem 0;
   text-align: center;

@@ -1,56 +1,134 @@
 /* =================================================================
-   1. Main Page & Form Layout
+   1. Main Page & Top-Level Toggle
    ================================================================= */
 .submit-page-container {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
+    height: calc(100vh - 60px); /* Full viewport height minus header */
+    display: flex;
+    flex-direction: column;
 }
 
-.submit-form-redesigned {
-    display: grid;
-    grid-template-columns: 55fr 45fr;
-    gap: 2.5rem;
-    max-width: 1600px;
-    margin: 0 auto;
+.project-type-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
 }
 
-.form-main-column,
-.form-secondary-column {
+.project-type-toggle button {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border: 2px solid #374151;
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.project-type-toggle button:hover {
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+}
+
+.project-type-toggle button.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* =================================================================
+   2. Playground View Layout
+   ================================================================= */
+.playground-container {
+    flex-grow: 1; /* Take up remaining vertical space */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.playground-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.header-details {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.playground-header input {
+    background: #374151;
+    border: 1px solid #4b5563;
+    color: var(--text-primary);
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+.playground-header input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+.playground-title-input { width: 250px; font-weight: 700; }
+.playground-desc-input { flex-grow: 1; }
+.playground-header .tag-input-container { padding: 0.3rem 0.5rem; }
+.playground-header .tag-input-container input { padding: 0.3rem; }
+
+.main-panel-group {
+    height: 100%; /* Critical for panels to fill space */
+}
+.editor-panel { overflow: hidden; } /* Prevent scrollbars on the panel itself */
+.editor-label { padding: 0.5rem 1rem; background-color: #111827; font-weight: 700; color: var(--text-secondary); }
+.cm-editor { height: calc(100% - 35px) !important; } /* Ensure CodeMirror fills its container */
+
+.playground-preview-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: white;
+}
+
+/* Resizable handle styles (from ProjectDetailPage) */
+.resize-handle { background-color: #374151; }
+.resize-handle[data-active="true"] { background-color: var(--primary-color); }
+.resize-handle.vertical { height: 4px; cursor: ns-resize; }
+.resize-handle.horizontal { width: 4px; cursor: ew-resize; }
+
+/* =================================================================
+   3. Live Project Form View
+   ================================================================= */
+.live-form-container {
+    max-width: 800px;
+    margin: 2rem auto;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.form-secondary-column {
-    position: sticky;
-    top: 80px;
-    height: calc(100vh - 100px);
-}
+.submit-header { text-align: center; }
+.submit-header h1 { font-size: 2rem; }
+.submit-header p { font-size: 1rem; color: var(--text-secondary); }
 
-/* =================================================================
-   2. Form Sections & Groups (No Changes)
-   ================================================================= */
-.submit-header { text-align: center; margin-bottom: 0; }
-.submit-header h1 { font-size: 2.25rem; font-weight: 800; margin: 0; }
-.submit-header p { color: var(--text-secondary); font-size: 1.125rem; margin-top: 0.5rem; }
 .form-section { background-color: var(--card-bg); border: 1px solid #374151; padding: 1.5rem; border-radius: 0.75rem; display: flex; flex-direction: column; gap: 1.25rem; }
 .form-section legend { padding: 0 0.5rem; font-weight: 700; font-size: 1.125rem; color: var(--primary-color); }
 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
 .form-group label { font-weight: 700; color: var(--text-secondary); font-size: 0.875rem; }
-.form-group input, .form-group textarea { width: 100%; padding: 0.8rem 1rem; background-color: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; color: var(--text-primary); font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
-.code-editor { font-family: 'Courier New', Courier, monospace; background-color: #111827 !important; color: #d1d5db !important; resize: vertical; min-height: 120px; }
+.form-group input, .form-group textarea { width: 100%; padding: 0.8rem 1rem; background-color: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; color: var(--text-primary); font-size: 1rem; box-sizing: border-box; }
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); }
 
-/* =================================================================
-   3. Custom Components (No Changes)
-   ================================================================= */
-.project-type-selector { border-color: var(--primary-color); }
-.radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.radio-group label { text-align: center; padding: 0.75rem 1rem; border: 2px solid #374151; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; font-weight: 700; color: var(--text-secondary); }
-.radio-group label:hover { border-color: var(--primary-color); color: var(--text-primary); }
-.radio-group label.active { background-color: var(--primary-color); border-color: var(--primary-color); color: white; box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); }
-.radio-group input[type="radio"] { display: none; }
+/* Tag styles reused from previous CSS */
 .tag-input-container { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; background-color: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; padding: 0.5rem; }
-.tag-input-container:focus-within { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+.tag-input-container:focus-within { border-color: var(--primary-color); }
 .tag-input-container input { flex-grow: 1; border: none; background: none; padding: 0.25rem; color: var(--text-primary); min-width: 120px; }
 .tag-input-container input:focus { box-shadow: none; }
 .tag-pill { display: flex; align-items: center; background-color: var(--primary-color); color: #111827; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 700; font-size: 0.875rem; }
@@ -58,107 +136,121 @@
 .tag-pill button:hover { opacity: 1; }
 
 /* =================================================================
-   4. UPDATED Resizable Preview Styles
+   4. Universal Submit Button
    ================================================================= */
-.preview-container {
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.submit-btn:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+.submit-btn:disabled {
+    background-color: #4b5563;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+/* =================================================================
+   5. Mobile-Friendly Playground & Forms
+   ================================================================= */
+
+/* Playground Mobile Tab Navigation */
+.playground-mobile-container {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: var(--card-bg);
-    border-radius: 0.75rem;
-    border: 1px solid #374151;
     overflow: hidden;
 }
 
-.preview-toolbar {
+.mobile-tab-nav {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1rem;
+    overflow-x: auto;
     background-color: #111827;
-    border-bottom: 1px solid #374151;
+    border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
 }
 
-.preview-toolbar-label {
-    font-weight: 700;
-    color: var(--text-secondary);
-}
-
-.preview-size-display {
-    font-size: 0.8rem;
-    font-family: monospace;
-    color: var(--text-secondary);
-    background-color: #374151;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-}
-
-.resizable-wrapper {
-    flex-grow: 1;
-    padding: 1rem;
-    overflow: hidden;
-}
-
-.resizable-preview-box {
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    overflow: hidden;
-    height: 100% !important; /* Override default inline style */
-}
-
-.form-preview-iframe, .form-preview-image, .preview-placeholder {
-    width: 100%;
-    height: 100%;
+.mobile-tab-nav button {
+    padding: 0.75rem 1rem;
     border: none;
-    background-color: #fff;
-    display: block;
-    border-radius: 0.5rem;
-}
-
-.preview-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-bottom: 3px solid transparent;
+    background: none;
     color: var(--text-secondary);
-    background-color: transparent;
-    border: 2px dashed #374151;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
-/* Styles the drag handle from the re-resizable library */
-.resizable-preview-box > div[class^="handle-"] {
-    position: absolute;
-    background-color: var(--primary-color) !important;
-    width: 8px !important;
-    right: -4px !important;
-    top: 0 !important;
+.mobile-tab-nav button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.mobile-tab-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: #1e1e1e;
+}
+.mobile-tab-content .cm-editor {
     height: 100% !important;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-    z-index: 10;
-    cursor: col-resize;
-}
-.resizable-preview-box > div[class^="handle-"]:hover {
-    opacity: 1;
 }
 
-/* =================================================================
-   5. Submit Button (No Changes)
-   ================================================================= */
-.submit-btn { background-color: var(--primary-color); color: white; font-weight: 700; font-size: 1rem; padding: 0.9rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s ease; margin-top: 0; }
-.submit-btn:hover:not(:disabled) { background-color: var(--primary-hover); }
-.submit-btn:disabled { background-color: #4b5563; cursor: not-allowed; }
+/* Form inside the 'Details' mobile tab */
+.mobile-details-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+.mobile-details-form input,
+.mobile-details-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: #374151;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
 
-/* =================================================================
-   6. Mobile Responsiveness
-   ================================================================= */
-@media (max-width: 1024px) {
-    .submit-form-redesigned {
-        grid-template-columns: 1fr;
+/* Mobile-only submit button for playground */
+.submit-btn-mobile {
+    display: none; /* Hidden by default */
+}
+
+/* Live Form Responsiveness */
+@media (max-width: 767px) {
+    .submit-page-container {
+        padding: 1rem;
+        height: auto; /* Allow page to scroll on mobile */
     }
-    .form-secondary-column {
-        position: relative;
-        top: 0;
-        height: 60vh;
-        min-height: 500px;
+    .playground-container {
+        height: calc(100vh - 150px); /* Fill available space */
+    }
+    .live-form-container {
+        margin: 1rem auto;
+        width: 100%;
+    }
+    .submit-btn-mobile {
+        display: block; /* Show on mobile */
+        width: 100%;
+        padding: 0.9rem;
+        margin-top: 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
     }
 }

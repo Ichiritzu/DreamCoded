@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
-import 'swiper/css';
+import 'swiper/css'; // These imports can be moved to App.js if you prefer
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './HomePage.css';
@@ -11,24 +11,17 @@ import SkeletonCard from '../../components/Skeleton/SkeletonCard';
 const CarouselRow = ({ title, filter }) => {
     const [apps, setApps] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showSkeletons, setShowSkeletons] = useState(false);
-
+    // Simplified loading state logic
     useEffect(() => {
         setLoading(true);
-        setShowSkeletons(false);
-        const skeletonTimeout = setTimeout(() => setShowSkeletons(true), 200);
-
         const apiUrl = `https://dreamcoded.com/api.php?limit=12&filter=${filter}&t=${Date.now()}`;
-
         fetch(apiUrl)
             .then((res) => (res.ok ? res.json() : Promise.reject('Network error')))
             .then((data) => {
                 setApps(data.projects || []);
-                setLoading(false);
             })
-            .catch(() => setLoading(false));
-            
-        return () => clearTimeout(skeletonTimeout);
+            .catch(() => { /* Handle error if needed */ })
+            .finally(() => setLoading(false));
     }, [filter]);
 
     const getAvatarSrc = (app) => {
@@ -50,47 +43,52 @@ const CarouselRow = ({ title, filter }) => {
                 pagination={{ clickable: true }}
                 navigation={true}
                 breakpoints={{
-                    768: { slidesPerView: 3, spaceBetween: 20, centeredSlides: false },
+                    640: { slidesPerView: 2, spaceBetween: 20, centeredSlides: false },
                     1024: { slidesPerView: 3, spaceBetween: 30, centeredSlides: false },
                 }}
                 className="mySwiper"
             >
-                {loading && showSkeletons && 
+                {loading ? (
                     Array.from({ length: 5 }).map((_, idx) => (
                         <SwiperSlide key={idx}><SkeletonCard /></SwiperSlide>
                     ))
-                }
-
-                {!loading && apps.map((app) => (
-                    <SwiperSlide key={app.id}>
-                        <div className="carousel-card-wrapper">
-                            <Link to={`/project/${app.id}`} className="carousel-card-link">
-                                <img src={app.image_url} alt={app.title} loading="lazy" className="carousel-card-img" />
-                                <div className="carousel-card-overlay">
-                                    <h3>{app.title}</h3>
+                ) : (
+                    apps.map((app) => (
+                        <SwiperSlide key={app.id}>
+                            {/* NEW CARD STRUCTURE: The entire card is one link */}
+                            <Link to={`/project/${app.id}`} className="card">
+                                <div className="card-image-container">
+                                    <img src={app.image_url} alt={app.title} loading="lazy" className="card-image" />
+                                    <div className="card-hover-overlay">
+                                        <span>View Project</span>
+                                    </div>
+                                </div>
+                                <div className="card-content">
+                                    <h3 className="card-title">{app.title}</h3>
+                                    <div className="card-footer">
+                                        <div className="card-author">
+                                            <img 
+                                                src={getAvatarSrc(app)} 
+                                                alt={app.author} 
+                                                className="card-avatar"
+                                            />
+                                            <span>{app.author}</span>
+                                        </div>
+                                        <div className="card-stats">
+                                            <span>❤️ {app.total_likes}</span>
+                                            <span>👁️ {app.total_views}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </Link>
-                            <div className="carousel-card-meta">
-                                <Link to={`/user/${app.author}`} className="carousel-author-link">
-                                    <img 
-                                        src={getAvatarSrc(app)} 
-                                        alt={app.author} 
-                                        className="carousel-author-avatar"
-                                    />
-                                    {app.author}
-                                </Link>
-                                <div className="carousel-stats">
-                                    <span>❤️ {app.total_likes}</span>
-                                    <span>👁️ {app.total_views}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </SwiperSlide>
-                ))}
+                        </SwiperSlide>
+                    ))
+                )}
             </Swiper>
         </section>
     );
 };
+
 
 const HomePage = () => {
     return (

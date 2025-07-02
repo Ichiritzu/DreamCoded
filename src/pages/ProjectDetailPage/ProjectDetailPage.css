@@ -137,7 +137,7 @@
 .editor-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  /*height: 100%;*/
   background-color: #1e1e1e;
 }
 
@@ -224,7 +224,7 @@
   border-radius: 4px;
 }
 .editor-wrapper {
-  height: 100%;
+  /*height: 100%;*/
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -316,10 +316,6 @@
     font-size: 0.85rem;
   }
 
-  .theme-select-wrapper {
-     /* Push theme selector to the right */
-  }
-
   .author-section {
     margin-bottom: 0.5rem;
   }
@@ -372,4 +368,188 @@
 
 .mobile-tabs button:last-child {
   flex: 0.5; /* Make the settings icon tab smaller */
+}
+/* =================================================================
+   7. View Layout Controls
+   ================================================================= */
+.view-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #2b3341;
+    border-radius: 0.5rem;
+    padding: 4px;
+    margin-left: auto; /* Pushes it to the left of other actions */
+}
+
+.view-btn {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--text-secondary);
+    padding: 0.35rem 0.6rem;
+}
+
+.view-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.view-btn:hover:not(.active) {
+    background-color: #4b5563;
+}
+
+/* Adjust the main actions section to accommodate the new controls */
+.actions-section {
+    margin-left: 0; /* Remove fixed margin */
+    flex-grow: 1; /* Allow it to take up space */
+    justify-content: flex-end; /* Align items to the right */
+}
+
+/* Make sure the stats section doesn't push everything away */
+.stats-section {
+    margin-left: 1.5rem;
+}
+
+/* On mobile, we might want to hide the new view controls */
+@media (max-width: 767px) {
+    .view-controls {
+        display: none;
+    }
+}
+
+/* =================================================================
+   8. Reusable Modal & Edit Form Styles
+   ================================================================= */
+
+/* The semi-transparent background overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* The modal window itself */
+.modal-content {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+/* Edit form specific styles */
+.edit-details-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.edit-details-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.edit-details-form label {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.edit-details-form input,
+.edit-details-form textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: #374151;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.edit-details-form .tag-input-container {
+    background-color: #374151;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+/* Modal footer with action buttons */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.modal-button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-button.primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.modal-button.primary:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.modal-button.secondary {
+    background-color: #4b5563;
+    color: var(--text-primary);
+}
+.modal-button.secondary:hover {
+    background-color: #6b7280;
+}
+
+.modal-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

@@ -1,44 +1,50 @@
-/* Import Swiper's core styles */
 @import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';
 
 /* =================================================================
    1. Page Layout & Hero Section
    ================================================================= */
 .dc-page {
-  width: 100%;
+    width: 100%;
 }
+
 .page-content-wrapper {
     margin: 0 auto;
     padding: 1rem 0;
-    width: 60%;
+    width: 70%;
+    max-width: 1400px;
 }
+
 .dc-hero {
-  padding: 4rem 1.5rem;
-  text-align: center;
+    padding: 4rem 1.5rem;
+    text-align: center;
 }
+
 .dc-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin: 0;
-  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
+
 .dc-sub {
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-  margin-top: 0.5rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* =================================================================
-   2. NEW Carousel Row Layout
+   2. Carousel Row Layout
    ================================================================= */
 .carousel-section-wrapper {
-  padding: 2.5rem 0;
+    padding: 2.5rem 0;
 }
 
 .carousel-section-title {
@@ -49,87 +55,117 @@
 }
 
 .mySwiper {
-    padding: 0.5rem 1.5rem 2.5rem !important; /* Add padding and space for pagination */
+    padding: 0.5rem 1.5rem 2.5rem !important;
 }
 
 /* =================================================================
-   3. Carousel Cards
+   3. Redesigned Carousel Cards
    ================================================================= */
-.carousel-card-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--card-bg);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.carousel-card-link {
-  display: block;
-  position: relative;
-  text-decoration: none;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  flex-grow: 1;
-}
-.carousel-card-link:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.2);
 }
 
-.carousel-card-img {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  background-color: #2e3440;
-  display: block;
+.card-image-container {
+    position: relative;
+    overflow: hidden;
 }
 
-.carousel-card-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 2rem 1rem 1rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-  color: white;
+.card-image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    background-color: #2e3440;
+    display: block;
+    transition: transform 0.4s ease;
 }
-.carousel-card-overlay h3 {
-    margin: 0;
+
+.card:hover .card-image {
+    transform: scale(1.05);
+}
+
+.card-hover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(139, 92, 246, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
     font-size: 1.25rem;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(4px);
 }
 
-.carousel-card-meta {
-  padding-top: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.card:hover .card-hover-overlay {
+    opacity: 1;
 }
 
-.carousel-author-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.carousel-author-link:hover {
-  color: var(--text-primary);
+.card-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
-.carousel-author-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: contain;
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
 }
 
-.carousel-stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+.card-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+.card-author:hover {
+    color: var(--primary-color);
+}
+
+.card-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }
 
 /* =================================================================
@@ -159,12 +195,29 @@
 }
 
 /* =================================================================
-   5. Utility & Messages
+   5. Utility & Mobile Responsiveness
    ================================================================= */
 .dc-error, .dc-empty {
-  width: 100%;
-  text-align: center;
-  padding: 4rem 1rem;
-  font-size: 1.25rem;
-  color: var(--text-secondary);
+    width: 100%;
+    text-align: center;
+    padding: 4rem 1rem;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+    .page-content-wrapper {
+        width: 100%;
+    }
+    .carousel-section-title {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .mySwiper {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
 }

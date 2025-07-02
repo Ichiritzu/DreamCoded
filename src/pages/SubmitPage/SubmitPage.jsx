@@ -1,73 +1,84 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Resizable } from 're-resizable';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import CodeMirror from '@uiw/react-codemirror';
+import { html } from '@codemirror/lang-html';
+import { css } from '@codemirror/lang-css';
+import { javascript } from '@codemirror/lang-javascript';
+import { dracula } from '@uiw/codemirror-theme-dracula';
+import { useWindowWidth } from '../../hooks/useWindowWidth';
 import { useMessage } from '../../context/MessageContext';
 import './SubmitPage.css';
 
-const InteractivePreview = ({ iframeContent, imageUrl, projectType }) => {
-    // State now holds the resizable dimensions
-    const [size, setSize] = useState({ width: '100%', height: '100%' });
+// Mobile view for the Playground
+const PlaygroundMobileView = ({ details, code, tags, tagInput, onDetailChange, onCodeChange, onTagChange, onTagKeyDown, onRemoveTag }) => {
+    const [activeTab, setActiveTab] = useState('details');
 
-    // This function is called when the user stops dragging the handle
-    const handleResizeStop = (e, direction, ref, d) => {
-        setSize(prev => ({ 
-            width: parseFloat(prev.width) + d.width, 
-            height: '100%' // Keep height consistent
-        }));
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'details':
+                return (
+                    <div className="mobile-details-form">
+                        <input type="text" name="title" placeholder="Project Title" value={details.title} onChange={onDetailChange} required />
+                        <textarea name="description" placeholder="Project Description" value={details.description} onChange={onDetailChange} required rows="3" />
+                        <div className="tag-input-container">
+                            {tags.map((tag, i) => (<div key={i} className="tag-pill">{tag}<button type="button" onClick={() => onRemoveTag(tag)}>&times;</button></div>))}
+                            <input type="text" value={tagInput} onChange={onTagChange} onKeyDown={onTagKeyDown} placeholder={tags.length<5 ? 'Add a tag...' : ''} disabled={tags.length>=5} />
+                        </div>
+                    </div>
+                );
+            case 'html':
+                return <CodeMirror value={code.html} height="100%" theme={dracula} extensions={[html()]} onChange={(v) => onCodeChange(v, 'html')} basicSetup={{ lineNumbers: true, foldGutter: true }} />;
+            case 'css':
+                return <CodeMirror value={code.css} height="100%" theme={dracula} extensions={[css()]} onChange={(v) => onCodeChange(v, 'css')} basicSetup={{ lineNumbers: true, foldGutter: true }} />;
+            case 'js':
+                return <CodeMirror value={code.js} height="100%" theme={dracula} extensions={[javascript()]} onChange={(v) => onCodeChange(v, 'js')} basicSetup={{ lineNumbers: true, foldGutter: true }} />;
+            case 'preview':
+                const iframeContent = `<!DOCTYPE html><html><head><style>${code.css}</style></head><body>${code.html}<script>${code.js}</script></body></html>`;
+                return <iframe srcDoc={iframeContent} title="Live Preview" sandbox="allow-scripts" className="playground-preview-iframe" />;
+            default:
+                return null;
+        }
     };
-
+    
     return (
-        <div className="preview-container">
-            <div className="preview-toolbar">
-                <span className="preview-toolbar-label">Live Preview</span>
-                <div className="preview-size-display">
-                    {typeof size.width === 'string' ? size.width : `${Math.round(size.width)}px`}
-                </div>
+        <div className="playground-mobile-container">
+            <div className="mobile-tab-nav">
+                <button type="button" onClick={() => setActiveTab('details')} className={activeTab === 'details' ? 'active' : ''}>Details</button>
+                <button type="button" onClick={() => setActiveTab('html')} className={activeTab === 'html' ? 'active' : ''}>HTML</button>
+                <button type="button" onClick={() => setActiveTab('css')} className={activeTab === 'css' ? 'active' : ''}>CSS</button>
+                <button type="button" onClick={() => setActiveTab('js')} className={activeTab === 'js' ? 'active' : ''}>JS</button>
+                <button type="button" onClick={() => setActiveTab('preview')} className={activeTab === 'preview' ? 'active' : ''}>Preview</button>
             </div>
-            <div className="resizable-wrapper">
-                <Resizable
-                    size={{ width: size.width, height: size.height }}
-                    onResizeStop={handleResizeStop}
-                    minWidth={320}
-                    maxWidth="100%"
-                    enable={{ right: true }} // Only allow resizing from the right handle
-                    className="resizable-preview-box"
-                >
-                    {projectType === 'playground' ? (
-                        <iframe srcDoc={iframeContent} title="Live Preview" sandbox="allow-scripts" className="form-preview-iframe" />
-                    ) : (
-                        imageUrl ? 
-                            <img src={imageUrl} alt="Project preview" className="form-preview-image" /> : 
-                            <div className="preview-placeholder">Enter an image URL to see a preview</div>
-                    )}
-                </Resizable>
+            <div className="mobile-tab-content">
+                {renderContent()}
             </div>
         </div>
     );
 };
 
-
 const SubmitPage = () => {
     const navigate = useNavigate();
     const { showMessage } = useMessage();
+    const windowWidth = useWindowWidth();
+
     const [projectType, setProjectType] = useState('playground');
-    
-    const [formData, setFormData] = useState({
-        title: '', description: '', image_url: '', project_url: '', demo_url: '',
-        code_html: '', code_css: '', code_js: '',
+    const [isLoading, setIsLoading] = useState(false);
+    const [details, setDetails] = useState({
+        title: '',
+        description: '',
+        image_url: '',
+        project_url: '',
     });
-    
+    const [code, setCode] = useState({ html: '', css: '', js: '' });
     const [tags, setTags] = useState([]);
     const [tagInput, setTagInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
     const loggedInUser = useMemo(() => JSON.parse(localStorage.getItem('dreamcodedUser')), []);
 
-    const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-    
-    const handleTagInputChange = (e) => { setTagInput(e.target.value); };
+    const handleDetailChange = (e) => setDetails({ ...details, [e.target.name]: e.target.value });
+    const handleCodeChange = (value, editorName) => setCode(prev => ({ ...prev, [editorName]: value }));
+    const handleTagInputChange = (e) => setTagInput(e.target.value);
     
     const handleTagKeyDown = (e) => {
         if ((e.key === 'Enter' || e.key === ',') && tagInput.trim() !== '') {
@@ -79,77 +90,141 @@ const SubmitPage = () => {
         }
     };
 
-    const removeTag = (tagToRemove) => {
-        setTags(tags.filter(tag => tag !== tagToRemove));
-    };
+    const removeTag = (tagToRemove) => setTags(tags.filter(tag => tag !== tagToRemove));
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!loggedInUser) {
-            showMessage("You must be logged in to submit a project.", "error");
+            showMessage("You must be logged in.", "error");
             return;
         }
         setIsLoading(true);
-        const submissionData = { ...formData, user_id: loggedInUser.id, project_type: projectType, tags: tags.join(',') };
-        fetch('https://dreamcoded.com/api/submit.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submissionData) })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    showMessage('Project submitted successfully!', 'success');
-                    setTimeout(() => navigate('/'), 500);
-                } else {
-                    showMessage(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                showMessage('A network error occurred. Please try again.', 'error');
-                console.error('Submit Error:', error);
-            })
-            .finally(() => { setIsLoading(false); });
+
+        const submissionData = {
+            ...details,
+            ...(projectType === 'playground' && { code_html: code.html, code_css: code.css, code_js: code.js }),
+            user_id: loggedInUser.id,
+            project_type: projectType,
+            tags: tags.join(',')
+        };
+
+        try {
+            const response = await fetch('https://dreamcoded.com/api/submit.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(submissionData)
+            });
+            const data = await response.json();
+
+            if (data.status === 'success' && data.project_id) {
+                showMessage('Project submitted successfully!');
+                navigate(`/project/${data.project_id}`);
+            } else {
+                showMessage(data.message || 'An unknown error occurred.', 'error');
+            }
+        } catch (error) {
+            showMessage('A network error occurred. Please try again.', 'error');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const createIframeContent = () => `<!DOCTYPE html><html><head><style>${formData.code_css}</style></head><body>${formData.code_html}<script>${formData.code_js}</script></body></html>`;
+    const createIframeContent = () => `<!DOCTYPE html><html><head><style>${code.css}</style></head><body>${code.html}<script>${code.js}</script></body></html>`;
+
+    const renderPlaygroundView = () => (
+        <div className="playground-container">
+            {windowWidth >= 768 && (
+                <header className="playground-header">
+                    <div className="header-details">
+                        <input type="text" name="title" placeholder="Project Title" value={details.title} onChange={handleDetailChange} required className="playground-title-input" />
+                        <input type="text" name="description" placeholder="Project Description" value={details.description} onChange={handleDetailChange} required className="playground-desc-input" />
+                        <div className="tag-input-container">
+                            {tags.map((tag, i) => (<div key={i} className="tag-pill">{tag}<button type="button" onClick={() => removeTag(tag)}>&times;</button></div>))}
+                            <input type="text" value={tagInput} onChange={handleTagInputChange} onKeyDown={handleTagKeyDown} placeholder={tags.length<5 ? 'Add a tag...' : ''} disabled={tags.length>=5} />
+                        </div>
+                    </div>
+                    <button onClick={handleSubmit} className="submit-btn" disabled={isLoading}>
+                        {isLoading ? 'Submitting...' : 'Submit'}
+                    </button>
+                </header>
+            )}
+
+            {windowWidth < 768 ? (
+                <PlaygroundMobileView 
+                    details={details}
+                    code={code}
+                    tags={tags}
+                    tagInput={tagInput}
+                    onDetailChange={handleDetailChange}
+                    onCodeChange={handleCodeChange}
+                    onTagChange={handleTagInputChange}
+                    onTagKeyDown={handleTagKeyDown}
+                    onRemoveTag={removeTag}
+                />
+            ) : (
+                <PanelGroup direction="vertical" className="main-panel-group">
+                    <Panel defaultSize={50} minSize={20}>
+                        <PanelGroup direction="horizontal">
+                            <Panel defaultSize={33} minSize={10} className="editor-panel">
+                                <div className="editor-label">HTML</div>
+                                <CodeMirror value={code.html} height="100%" theme={dracula} extensions={[html()]} onChange={(v) => handleCodeChange(v, 'html')} basicSetup={{ lineNumbers: true, foldGutter: true }} />
+                            </Panel>
+                            <PanelResizeHandle className="resize-handle horizontal" />
+                            <Panel defaultSize={33} minSize={10} className="editor-panel">
+                                <div className="editor-label">CSS</div>
+                                <CodeMirror value={code.css} height="100%" theme={dracula} extensions={[css()]} onChange={(v) => handleCodeChange(v, 'css')} basicSetup={{ lineNumbers: true, foldGutter: true }} />
+                            </Panel>
+                            <PanelResizeHandle className="resize-handle horizontal" />
+                            <Panel defaultSize={34} minSize={10} className="editor-panel">
+                                <div className="editor-label">JavaScript</div>
+                                <CodeMirror value={code.js} height="100%" theme={dracula} extensions={[javascript()]} onChange={(v) => handleCodeChange(v, 'js')} basicSetup={{ lineNumbers: true, foldGutter: true }} />
+                            </Panel>
+                        </PanelGroup>
+                    </Panel>
+                    <PanelResizeHandle className="resize-handle vertical" />
+                    <Panel defaultSize={50} minSize={20}>
+                        <iframe srcDoc={createIframeContent()} title="Live Preview" sandbox="allow-scripts" className="playground-preview-iframe" />
+                    </Panel>
+                </PanelGroup>
+            )}
+            
+            {windowWidth < 768 && (
+                <button onClick={handleSubmit} className="submit-btn-mobile" disabled={isLoading}>
+                    {isLoading ? 'Submitting...' : 'Submit Project'}
+                </button>
+            )}
+        </div>
+    );
+
+    const renderLiveView = () => (
+        <form onSubmit={handleSubmit} className="live-form-container">
+             <header className="submit-header">
+                <h1>Submit a Live Project</h1>
+                <p>Share your creation by providing links to its resources.</p>
+            </header>
+            <fieldset className="form-section">
+                <legend>Project Details</legend>
+                <div className="form-group"><label>Title</label><input type="text" name="title" value={details.title} onChange={handleDetailChange} required /></div>
+                <div className="form-group"><label>Description</label><textarea name="description" value={details.description} onChange={handleDetailChange} rows="3" required></textarea></div>
+                <div className="form-group"><label>Tags (up to 5)</label><div className="tag-input-container">{tags.map((tag, i) => (<div key={i} className="tag-pill">{tag}<button type="button" onClick={() => removeTag(tag)}>&times;</button></div>))}<input type="text" value={tagInput} onChange={handleTagInputChange} onKeyDown={handleTagKeyDown} placeholder={tags.length<5?'Add a tag...':''} disabled={tags.length>=5} /></div></div>
+            </fieldset>
+            <fieldset className="form-section">
+                <legend>Links & Media</legend>
+                <div className="form-group"><label>Image URL (Preview)</label><input type="url" name="image_url" value={details.image_url} onChange={handleDetailChange} placeholder="https://..." required/></div>
+                <div className="form-group"><label>Live Project URL</label><input type="url" name="project_url" value={details.project_url} onChange={handleDetailChange} placeholder="https://..." required/></div>
+            </fieldset>
+            <button type="submit" className="submit-btn" disabled={isLoading}>{isLoading ? 'Submitting...' : 'Submit Project'}</button>
+        </form>
+    );
 
     return (
         <div className="submit-page-container">
-            <form onSubmit={handleSubmit} className="submit-form-redesigned">
-                <div className="form-main-column">
-                    <header className="submit-header">
-                        <h1>Submit Your Dream</h1>
-                        <p>Share your amazing creation with the DreamCoded community.</p>
-                    </header>
-                    <fieldset className="form-section project-type-selector">
-                        <legend>Type</legend>
-                        <div className="radio-group">
-                            <label className={projectType === 'playground' ? 'active' : ''}>
-                                <input type="radio" name="projectType" value="playground" checked={projectType === 'playground'} onChange={(e) => setProjectType(e.target.value)} />Playground
-                            </label>
-                            <label className={projectType === 'live' ? 'active' : ''}>
-                                <input type="radio" name="projectType" value="live" checked={projectType === 'live'} onChange={(e) => setProjectType(e.target.value)} />Live
-                            </label>
-                        </div>
-                    </fieldset>
-                    <fieldset className="form-section">
-                        <legend>Details</legend>
-                        <div className="form-group"><label htmlFor="title">Title</label><input type="text" id="title" name="title" value={formData.title} onChange={handleInputChange} required /></div>
-                        <div className="form-group"><label htmlFor="description">Description</label><textarea id="description" name="description" value={formData.description} onChange={handleInputChange} rows="3" required></textarea></div>
-                        <div className="form-group"><label htmlFor="tags">Tags (up to 5)</label><div className="tag-input-container">{tags.map((tag, i) => (<div key={i} className="tag-pill">{tag}<button type="button" onClick={() => removeTag(tag)}>&times;</button></div>))}<input type="text" id="tags" value={tagInput} onChange={handleTagInputChange} onKeyDown={handleTagKeyDown} placeholder={tags.length<5?'Add a tag and press Enter...':'Maximum 5 tags reached'} disabled={tags.length>=5} /></div></div>
-                    </fieldset>
-                    {projectType === 'playground' ? (
-                        <fieldset className="form-section code-section"><legend>Code Snippets</legend><div className="form-group"><label htmlFor="code_html">HTML</label><textarea className="code-editor" id="code_html" name="code_html" value={formData.code_html} onChange={handleInputChange} rows="6"></textarea></div><div className="form-group"><label htmlFor="code_css">CSS</label><textarea className="code-editor" id="code_css" name="code_css" value={formData.code_css} onChange={handleInputChange} rows="6"></textarea></div><div className="form-group"><label htmlFor="code_js">JavaScript</label><textarea className="code-editor" id="code_js" name="code_js" value={formData.code_js} onChange={handleInputChange} rows="6"></textarea></div></fieldset>
-                    ) : (
-                        <fieldset className="form-section"><legend>Links & Media</legend><div className="form-group"><label htmlFor="image_url">Image URL (Preview)</label><input type="url" id="image_url" name="image_url" value={formData.image_url} onChange={handleInputChange} placeholder="https://..." required/></div><div className="form-group"><label htmlFor="project_url">Live Project URL</label><input type="url" id="project_url" name="project_url" value={formData.project_url} onChange={handleInputChange} placeholder="https://..." required/></div><div className="form-group"><label htmlFor="demo_url">Video Demo URL (Optional)</label><input type="url" id="demo_url" name="demo_url" value={formData.demo_url} onChange={handleInputChange} placeholder="https://youtube.com/..." /></div></fieldset>
-                    )}
-                    <button type="submit" className="submit-btn" disabled={isLoading}>{isLoading ? 'Submitting...' : 'Submit Project'}</button>
-                </div>
-                <div className="form-secondary-column">
-                    <InteractivePreview 
-                        iframeContent={createIframeContent()}
-                        imageUrl={formData.image_url}
-                        projectType={projectType}
-                    />
-                </div>
-            </form>
+            <div className="project-type-toggle">
+                <button type="button" onClick={() => setProjectType('playground')} className={projectType === 'playground' ? 'active' : ''}>Playground</button>
+                <button type="button" onClick={() => setProjectType('live')} className={projectType === 'live' ? 'active' : ''}>Live Project</button>
+            </div>
+
+            {projectType === 'playground' ? renderPlaygroundView() : renderLiveView()}
         </div>
     );
 };

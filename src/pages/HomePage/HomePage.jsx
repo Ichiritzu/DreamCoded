@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -7,6 +7,80 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './HomePage.css';
 import SkeletonCard from '../../components/Skeleton/SkeletonCard';
+
+// --- Simplified ProjectCard Component ---
+const ProjectCard = ({ app }) => {
+    const getAvatarSrc = (app) => {
+        if (app.author_avatar_url) {
+            return `https://dreamcoded.com${app.author_avatar_url}?v=${Date.now()}`;
+        }
+        return `https://ui-avatars.com/api/?name=${app.author}&background=161b22&color=c9d1d9&size=24`;
+    };
+
+    // Stop click from bubbling up to a parent link
+    const handleInnerLinkClick = (e) => {
+        e.stopPropagation();
+    };
+    
+    // The iframe content is now always present
+    const iframeSrcDoc = `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}<\/script></body></html>`;
+
+    return (
+        <div className="card">
+            <Link to={`/project/${app.id}`} className="card-image-link">
+                <div className="card-image-container">
+                    <iframe
+                        srcDoc={iframeSrcDoc}
+                        title={app.title}
+                        sandbox="allow-scripts"
+                        className="card-iframe-preview"
+                    />
+                    <div className="card-hover-overlay"></div>
+                </div>
+            </Link>
+            <div className="card-content">
+                <h3 className="card-title">
+                    <Link to={`/project/${app.id}`}>{app.title}</Link>
+                </h3>
+                
+                {app.tags && (
+                    <div className="card-tags-container">
+                        {app.tags.split(',').slice(0, 3).map(tag => (
+                            <Link 
+                                key={tag} 
+                                to={`/tag/${tag.trim()}`} 
+                                className="tag-pill"
+                                onClick={handleInnerLinkClick}
+                            >
+                                {tag.trim()}
+                            </Link>
+                        ))}
+                    </div>
+                )}
+
+                <div className="card-footer">
+                    <Link 
+                        to={`/user/${app.author}`} 
+                        className="card-author"
+                        onClick={handleInnerLinkClick}
+                    >
+                        <img 
+                            src={getAvatarSrc(app)} 
+                            alt={app.author} 
+                            className="card-avatar"
+                        />
+                        <span>{app.author}</span>
+                    </Link>
+                    <div className="card-stats">
+                        <span>❤️ {app.total_likes}</span>
+                        <span>👁️ {app.total_views}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 
 const CarouselRow = ({ title, filter, tag }) => {
     const [apps, setApps] = useState([]);
@@ -27,19 +101,6 @@ const CarouselRow = ({ title, filter, tag }) => {
             .catch(() => { /* Handle error if needed */ })
             .finally(() => setLoading(false));
     }, [filter, tag]);
-
-    const getAvatarSrc = (app) => {
-        if (app.author_avatar_url) {
-            return `https://dreamcoded.com${app.author_avatar_url}?v=${Date.now()}`;
-        } else {
-            return `https://ui-avatars.com/api/?name=${app.author}&background=161b22&color=c9d1d9&size=24`;
-        }
-    };
-
-    // Stop click from bubbling up to a parent link
-    const handleInnerLinkClick = (e) => {
-        e.stopPropagation(); 
-    };
 
     return (
         <section className="carousel-section-wrapper">
@@ -64,61 +125,7 @@ const CarouselRow = ({ title, filter, tag }) => {
                 ) : (
                     apps.map((app) => (
                         <SwiperSlide key={app.id}>
-                            {/* The card is now a div, not a link */}
-                            <div className="card">
-                                <Link to={`/project/${app.id}`} className="card-image-link">
-                                    <div className="card-image-container">
-                                        <iframe
-    srcDoc={`<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}<\/script></body></html>`}
-    title={app.title}
-    sandbox="allow-scripts"
-    loading="lazy"
-    className="card-iframe-preview"
-/>
-                                        <div className="card-hover-overlay"></div>
-                                    </div>
-                                </Link>
-                                <div className="card-content">
-                                    <h3 className="card-title">
-                                        <Link to={`/project/${app.id}`}>{app.title}</Link>
-                                    </h3>
-                                    
-                                    {app.tags && (
-                                        <div className="card-tags-container">
-                                            {app.tags.split(',').slice(0, 3).map(tag => (
-                                                <Link 
-                                                    key={tag} 
-                                                    to={`/tag/${tag.trim()}`} 
-                                                    className="tag-pill"
-                                                    onClick={handleInnerLinkClick}
-                                                >
-                                                    {tag.trim()}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    <div className="card-footer">
-                                        {/* Author is now its own separate link */}
-                                        <Link 
-                                            to={`/user/${app.author}`} 
-                                            className="card-author"
-                                            onClick={handleInnerLinkClick}
-                                        >
-                                            <img 
-                                                src={getAvatarSrc(app)} 
-                                                alt={app.author} 
-                                                className="card-avatar"
-                                            />
-                                            <span>{app.author}</span>
-                                        </Link>
-                                        <div className="card-stats">
-                                            <span>❤️ {app.total_likes}</span>
-                                            <span>👁️ {app.total_views}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                           <ProjectCard app={app} />
                         </SwiperSlide>
                     ))
                 )}
@@ -135,11 +142,11 @@ const HomePage = () => {
         <div className="dc-page">
             {!tagName && (
                  <section className="dc-hero">
-                    <h1 className="dc-title">DreamCoded</h1>
-                    <p className="dc-sub">Where digital dreams become interactive reality.</p>
-                </section>
+                     <h1 className="dc-title">DreamCoded</h1>
+                     <p className="dc-sub">Where digital dreams become interactive reality.</p>
+                 </section>
             )}
-           
+            
             <div className="page-content-wrapper">
                 {tagName ? (
                     <CarouselRow 

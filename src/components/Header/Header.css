@@ -4,7 +4,7 @@
   justify-content: space-between;
   padding: 1.75rem 1.5rem;
   /*0.75em*/
-  height: 2%;
+  height: 1%;
   backdrop-filter: blur(3px);
   will-change: backdrop-filter;
   background-color: rgba(21, 24, 35, 0.6); /* semi-transparent dark */

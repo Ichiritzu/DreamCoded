@@ -13,6 +13,7 @@
     "@uiw/codemirror-theme-github": "^4.23.13",
     "@uiw/codemirror-theme-material": "^4.23.13",
     "@uiw/react-codemirror": "^4.23.13",
+    "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "re-resizable": "^6.11.2",
     "react": "^19.1.0",

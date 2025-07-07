@@ -239,11 +239,45 @@
 .cm-editor {
   overflow-y: auto;
 }
+/* Wraps the title and tags together */
+.project-title-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+/* Container for the tags */
+.project-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.project-tag {
+    background-color: #374151;
+    color: var(--text-secondary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.project-tag:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Adjust the main header to align items to the center now that the title area is taller */
+.project-header {
+    align-items: center;
+}
 /* ================================================================= 
    6. Mobile View & Responsiveness 
    ================================================================= */
 
-/* Mobile tab styles */
 .mobile-view-wrapper {
   display: flex;
   flex-direction: column;
@@ -251,11 +285,18 @@
   overflow: hidden;
 }
 
-.mobile-tabs {
+.mobile-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #1a1a1a;
   border-bottom: 2px solid #374151;
   flex-shrink: 0;
+}
+
+.mobile-tabs {
+  display: flex;
+  overflow-x: auto;
 }
 
 .mobile-tabs button {
@@ -280,13 +321,23 @@
   border-bottom-color: var(--primary-color);
 }
 
+.view-toggle-btn {
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  border: 1px solid var(--primary-color);
+  background-color: transparent;
+  color: var(--primary-color);
+  border-radius: 0.375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .mobile-content {
   flex-grow: 1;
   overflow-y: auto;
   background-color: #1e1e1e;
 }
 
-/* Responsive adjustments for the header */
 @media (max-width: 767px) {
   .project-header {
     flex-direction: column;
@@ -552,4 +603,294 @@
 .modal-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+/* Layout container for DesktopLayout */
+.desktop-layout {
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure preview pane fills space */
+.preview-pane {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+/* Iframe should always fill the preview container */
+.live-preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+.Panel {
+  transition: width 0.25s ease, height 0.25s ease;
+}
+
+/* =================================================================
+   1. Main Page & Core Layout
+   ================================================================= */
+.page-container {
+    padding: 1.5rem;
+    height: calc(100vh - 60px); /* Full viewport height minus header */
+    display: flex;
+    flex-direction: column;
+    background-color: #0d1117;
+}
+
+.playground-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    min-height: 0;
+    width: 100%;
+    border: 1px solid var(--border-color);
+}
+
+/* =================================================================
+   2. Playground Header
+   ================================================================= */
+.playground-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.header-details {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-width: 200px;
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.project-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.author-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.author-name {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.author-name:hover {
+    color: var(--primary-color);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+.action-btn {
+    background-color: var(--button-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.action-btn:hover {
+    background-color: #374151;
+    border-color: var(--text-secondary);
+}
+.action-btn.like-btn.liked {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.stats-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* =================================================================
+   3. Editor & Preview Panels
+   ================================================================= */
+.main-panel-group {
+    height: 100%;
+}
+
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background-color: #1e1e1e;
+}
+
+.editor-label {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 0.5rem 1rem;
+  background-color: #111827;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cm-editor {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cm-scroller {
+  flex: 1;
+  overflow: auto !important;
+  min-height: 0;
+  min-width: 0;
+}
+
+.cm-scroller::-webkit-scrollbar { width: 8px; height: 8px; }
+.cm-scroller::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 8px; }
+.cm-scroller::-webkit-scrollbar-thumb:hover { background: var(--primary-hover); }
+.cm-scroller::-webkit-scrollbar-track { background: #1e1e1e; }
+
+.preview-pane {
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.live-preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: white;
+  z-index: 0;
+}
+
+.resize-handle { background-color: #374151; }
+.resize-handle[data-active="true"] { background-color: var(--primary-color); }
+.resize-handle.vertical { height: 4px; cursor: ns-resize; }
+.resize-handle.horizontal { width: 4px; cursor: ew-resize; }
+
+/* =================================================================
+   4. Mobile View Specifics
+   ================================================================= */
+.playground-mobile-container { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #111827;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+.mobile-tab-nav { display: flex; overflow-x: auto; }
+.mobile-tab-nav button {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: none;
+    color: var(--text-secondary);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.mobile-tab-nav button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+
+.view-toggle-btn {
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    border: 1px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mobile-tab-content { flex-grow: 1; overflow-y: auto; background-color: #1e1e1e; }
+.mobile-tab-content .cm-editor { height: 100% !important; }
+
+/* =================================================================
+   5. Utility & Full-Screen Fallbacks
+   ================================================================= */
+.page-message {
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 6rem 0;
+  color: var(--text-secondary);
+}
+
+.live-project-full-page {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+}
+.preview-image-full {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+}
+.overlay-full {
+    position: absolute;
+    text-align: center;
+    color: white;
 }

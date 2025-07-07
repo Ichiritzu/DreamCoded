@@ -13,13 +13,14 @@
     justify-content: center;
     margin-bottom: 1.5rem;
     gap: 1rem;
+    flex-shrink: 0;
 }
 
 .project-type-toggle button {
     padding: 0.6rem 1.5rem;
     font-size: 1rem;
     font-weight: 700;
-    border: 2px solid #374151;
+    border: 0px solid #374151;
     background-color: var(--card-bg);
     color: var(--text-secondary);
     border-radius: 0.5rem;
@@ -42,12 +43,14 @@
    2. Playground View Layout
    ================================================================= */
 .playground-container {
-    flex-grow: 1; /* Take up remaining vertical space */
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     overflow: hidden;
+    min-height: 0;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .playground-header {
@@ -80,16 +83,76 @@
     border-color: var(--primary-color);
 }
 .playground-title-input { width: 250px; font-weight: 700; }
-.playground-desc-input { flex-grow: 1; }
 .playground-header .tag-input-container { padding: 0.3rem 0.5rem; }
 .playground-header .tag-input-container input { padding: 0.3rem; }
 
-.main-panel-group {
-    height: 100%; /* Critical for panels to fill space */
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
 }
-.editor-panel { overflow: hidden; } /* Prevent scrollbars on the panel itself */
-.editor-label { padding: 0.5rem 1rem; background-color: #111827; font-weight: 700; color: var(--text-secondary); }
-.cm-editor { height: calc(100% - 35px) !important; } /* Ensure CodeMirror fills its container */
+
+.main-panel-group {
+    height: 100%;
+}
+/* Editor Panel Container */
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden; /* no scrollbars here */
+  scrollbar-color: var(--primary-color) #1e1e1e;
+}
+
+/* CodeMirror Editor Wrapper */
+.cm-editor {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden; /* prevent dual scrollbars */
+}
+
+/* CodeMirror Scroller (actual scrollable area) */
+.cm-scroller {
+  flex: 1;
+  overflow: auto !important; /* show scrollbars only if needed */
+  min-height: 0;
+  min-width: 0; /* fix horizontal scrollbar overflow */
+}
+
+/* Optional: Style scrollbars */
+.cm-scroller::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 8px;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+.cm-scroller::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+/* Editor Label (Sticky Header) */
+.editor-label {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 0.5rem 1rem;
+  background-color: #111827;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
 
 .playground-preview-iframe {
     width: 100%;
@@ -98,7 +161,6 @@
     background-color: white;
 }
 
-/* Resizable handle styles (from ProjectDetailPage) */
 .resize-handle { background-color: #374151; }
 .resize-handle[data-active="true"] { background-color: var(--primary-color); }
 .resize-handle.vertical { height: 4px; cursor: ns-resize; }
@@ -109,11 +171,28 @@
    ================================================================= */
 .live-form-container {
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 1rem auto;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
+.preview-pane {
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.live-preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: white;
+  z-index: 0;
+}
+
 
 .submit-header { text-align: center; }
 .submit-header h1 { font-size: 2rem; }
@@ -126,7 +205,6 @@
 .form-group input, .form-group textarea { width: 100%; padding: 0.8rem 1rem; background-color: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; color: var(--text-primary); font-size: 1rem; box-sizing: border-box; }
 .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); }
 
-/* Tag styles reused from previous CSS */
 .tag-input-container { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; background-color: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; padding: 0.5rem; }
 .tag-input-container:focus-within { border-color: var(--primary-color); }
 .tag-input-container input { flex-grow: 1; border: none; background: none; padding: 0.25rem; color: var(--text-primary); min-width: 120px; }
@@ -136,121 +214,104 @@
 .tag-pill button:hover { opacity: 1; }
 
 /* =================================================================
-   4. Universal Submit Button
+   4. Universal Buttons
    ================================================================= */
-.submit-btn {
+.submit-btn, .generate-btn {
     background-color: var(--primary-color);
     color: white;
     font-weight: 700;
-    font-size: 1rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
     border-radius: 0.5rem;
     border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.submit-btn:hover:not(:disabled) {
-    background-color: var(--primary-hover);
-}
-.submit-btn:disabled {
-    background-color: #4b5563;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-/* =================================================================
-   5. Mobile-Friendly Playground & Forms
-   ================================================================= */
-
-/* Playground Mobile Tab Navigation */
-.playground-mobile-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-}
-
-.mobile-tab-nav {
-    display: flex;
-    overflow-x: auto;
-    background-color: #111827;
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0;
-}
-
-.mobile-tab-nav button {
-    padding: 0.75rem 1rem;
-    border: none;
-    border-bottom: 3px solid transparent;
-    background: none;
-    color: var(--text-secondary);
-    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
 }
-
-.mobile-tab-nav button.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
+.submit-btn:hover:not(:disabled), .generate-btn:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+.submit-btn:disabled, .generate-btn:disabled {
+    background-color: #4b5563;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.generate-btn {
+    background-color: #4b5563;
 }
 
-.mobile-tab-content {
-    flex-grow: 1;
-    overflow-y: auto;
-    background-color: #1e1e1e;
-}
-.mobile-tab-content .cm-editor {
-    height: 100% !important;
-}
-
-/* Form inside the 'Details' mobile tab */
-.mobile-details-form {
+/* =================================================================
+   5. Mobile-Friendly Playground & Forms
+   ================================================================= */
+.playground-mobile-container { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.mobile-header {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #111827;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
-.mobile-details-form input,
-.mobile-details-form textarea {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 0.8rem 1rem;
-    background-color: #374151;
-    border: 1px solid #4b5563;
-    border-radius: 0.5rem;
-    color: var(--text-primary);
-    font-size: 1rem;
+.mobile-tab-nav { display: flex; overflow-x: auto; }
+.mobile-tab-nav button { padding: 0.75rem 1rem; border: none; border-bottom: 3px solid transparent; background: none; color: var(--text-secondary); font-weight: 700; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+.mobile-tab-nav button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+.view-toggle-btn {
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    border: 1px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    cursor: pointer;
 }
+.mobile-tab-content { flex-grow: 1; overflow-y: auto; background-color: #1e1e1e; }
+.mobile-tab-content .cm-editor { height: 100% !important; }
 
-/* Mobile-only submit button for playground */
-.submit-btn-mobile {
+.mobile-details-form { display: flex; flex-direction: column; gap: 1.5rem; padding: 1.5rem; }
+.mobile-details-form input, .mobile-details-form textarea { box-sizing: border-box; width: 100%; padding: 0.8rem 1rem; background-color: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; color: var(--text-primary); font-size: 1rem; }
+
+.mobile-actions {
     display: none; /* Hidden by default */
 }
+.submit-btn-mobile {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 194, 255, 0.3);
+  transition: background 0.25s, transform 0.15s ease;
+}
 
-/* Live Form Responsiveness */
+.submit-btn-mobile:hover {
+  background-color: var(--primary-hover, #00a2d4);
+}
+
+.submit-btn-mobile:disabled {
+  background-color: #999;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
 @media (max-width: 767px) {
-    .submit-page-container {
-        padding: 1rem;
-        height: auto; /* Allow page to scroll on mobile */
-    }
-    .playground-container {
-        height: calc(100vh - 150px); /* Fill available space */
-    }
-    .live-form-container {
-        margin: 1rem auto;
-        width: 100%;
+    .submit-page-container { padding: 1rem; height: calc(100vh - 60px); }
+    .playground-container { height: 100%; }
+    .live-form-container { margin: 1rem auto; width: 100%; }
+    
+    .mobile-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-shrink: 0;
     }
     .submit-btn-mobile {
-        display: block; /* Show on mobile */
-        width: 100%;
-        padding: 0.9rem;
-        margin-top: 1rem;
         background-color: var(--primary-color);
-        color: white;
-        font-weight: 700;
-        font-size: 1rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
+    }
+    .mobile-actions .generate-btn {
+        flex-shrink: 0;
     }
 }

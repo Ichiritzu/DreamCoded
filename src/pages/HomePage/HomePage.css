@@ -103,16 +103,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(139, 92, 246, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.25rem;
-    font-weight: 700;
     opacity: 0;
     transition: opacity 0.3s ease;
-    backdrop-filter: blur(4px);
 }
 
 .card:hover .card-hover-overlay {
@@ -136,7 +128,6 @@
 .card-footer {
     margin-top: auto;
     padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -166,6 +157,45 @@
     gap: 1rem;
     font-size: 0.875rem;
     color: var(--text-secondary);
+}
+.card-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem; /* Space between tags and footer */
+}
+
+.tag-pill {
+    background-color: #374151;
+    color: var(--text-secondary);
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.tag-pill:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Adjust card title margin */
+.card-title {
+    margin-bottom: 0.5rem; /* Reduced margin */
+}
+.card-iframe-preview {
+    width: 100%;
+    height: 200px;
+    border: none;
+    border-radius: 8px;
+    background: #0d1117;
+    box-shadow: inset 0 0 0 1px #30363d;
+    transition: transform 0.3s ease;
+}
+.card-iframe-preview:hover {
+    transform: scale(1.01);
 }
 
 /* =================================================================

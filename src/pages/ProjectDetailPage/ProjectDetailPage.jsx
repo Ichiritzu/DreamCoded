@@ -21,6 +21,17 @@ function useDebounce(value, delay = 500) {
     return debouncedValue;
 }
 
+const HeartIcon = () => ( <svg className="heart-svg" viewBox="0 0 24 24" width="24" height="24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> );
+const EditIcon = () => ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg> );
+const SaveIcon = () => ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> );
+const DeleteIcon = () => ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg> );
+const SpinnerIcon = () => ( <svg className="spinner-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> );
+
+const HtmlLogo = () => ( <svg viewBox="0 0 128 128" width="24" height="24"><path fill="#E44D26" d="M20.4 114.2l-9.3-104.4h96.2l-9.3 104.4-38.8 10.8z"></path><path fill="#F16529" d="M64 117.3l31.9-8.9 8-89.6H64z"></path><path fill="#EBEBEB" d="M64 50.8v22.1l20.1 5.4 2.1-23.5zM64 27.6h24.4l1.7-19.2H64z"></path><path fill="#FFF" d="M64 88.2l-20.1-5.4.1-.1-2.9-32.1h22.9v-23H39.2l.4 4.3 4.2 46.9 20.2 5.4z"></path></svg> );
+const CssLogo = () => ( <svg viewBox="0 0 128 128" width="24" height="24"><path fill="#264DE4" d="M20.4 114.2l-9.3-104.4h96.2l-9.3 104.4-38.8 10.8z"></path><path fill="#2965F1" d="M64 117.3l31.9-8.9 8-89.6H64z"></path><path fill="#EBEBEB" d="M64 50.8v22.1l20.1 5.4 2.1-23.5zm0-23.2h22.4l1.7-19.2H64z"></path><path fill="#FFF" d="M64 88.2L43.9 82.8l-2.9-32.1h23v-23H39.2l.4 4.3 4.2 46.9 20.2 5.4z"></path></svg> );
+const JsLogo = () => ( <svg viewBox="0 0 128 128" width="24" height="24"><path fill="#F0DB4F" d="M21.2 21.2h85.6v85.6H21.2z"></path><path d="M93.4 89.2c.4-.7.6-1.5.6-2.5 0-2.4-1.2-4-3.6-5.4-2.7-1.5-4.4-2.5-4.4-4 0-1.1.7-2.1 2.4-2.1 1.6 0 2.8.7 3.6 2.1l3.5-2.2c-.8-1.7-2.5-3.1-5.8-3.1-3.2 0-5.4 1.6-5.4 4.3 0 2.5 1.4 4.1 3.9 5.5 2.8 1.5 4.1 2.6 4.1 4.1 0 1.5-1.1 2.3-2.8 2.3-1.8 0-3.3-.8-4.1-2.4l-3.6 2.1c1.1 2.3 3.3 3.6 6.8 3.6 3.8 0 6.2-1.6 6.2-4.6zm-26.6-1.9c.7 1.6 2.1 2.7 4.3 2.7 2.1 0 3.3-1 3.3-3.6v-13h4.9v13.2c0 3.9-2.2 5.9-6.3 5.9-3.7 0-6.1-2-7.2-4.4z"></path></svg> );
+const PreviewIcon = () => ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> );
+
 const Modal = ({ isOpen, onClose, title, children }) => {
     useEffect(() => {
         const handleKeyDown = (event) => { if (event.key === 'Escape') onClose(); };
@@ -108,28 +119,30 @@ const PlaygroundHeader = ({ project, onLike, onSave, onDelete, onEdit, isOwner, 
                         ))}
                     </div>
                 )}
-            </div>
-        </div>
-        <div className="header-actions">
-             <div className="author-info">
+                <div className="author-info">
                 <img src={project.author_avatar_url ? `https://dreamcoded.com${project.author_avatar_url}` : `https://ui-avatars.com/api/?name=${project.author}&background=111&color=fff`} alt={project.author} className="author-avatar"/>
                 <Link to={`/user/${project.author}`} className="author-name">{project.author}</Link>
             </div>
+            </div>
+        </div>
+        <div className="header-actions">
             <div className="stats-group">
                 <span className="stat-item">❤️ {totalLikes.toLocaleString()}</span>
                 <span className="stat-item">👁️ {(parseInt(project.total_views, 10)).toLocaleString()}</span>
             </div>
-            <button onClick={onLike} disabled={isDeleting} className={`action-btn like-btn ${liked ? 'liked' : ''}`}>
-                {liked ? 'Unlike' : 'Like'}
+            <button onClick={onLike} disabled={isDeleting} className={`action-btn like-btn ${liked ? 'liked' : ''}`} aria-label="Like button">
+                <HeartIcon />
             </button>
             {isOwner && (
                 <>
-                    <button onClick={onEdit} className="action-btn">Edit</button>
-                    <button onClick={onSave} disabled={isSaving || isDeleting} className="action-btn">
-                        {isSaving ? 'Saving...' : 'Save Code'}
+                    <button onClick={onEdit} className="action-btn edit-btn" aria-label="Edit Details">
+                        <EditIcon />
                     </button>
-                    <button onClick={onDelete} disabled={isSaving || isDeleting} className="action-btn">
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    <button onClick={onSave} disabled={isSaving || isDeleting} className="action-btn save-btn" aria-label="Save Code">
+                        {isSaving ? <SpinnerIcon /> : <SaveIcon />}
+                    </button>
+                    <button onClick={onDelete} disabled={isSaving || isDeleting} className="action-btn delete-btn" aria-label="Delete Project">
+                        <DeleteIcon />
                     </button>
                 </>
             )}
@@ -167,6 +180,14 @@ const DesktopPlayground = ({ code, onCodeChange, iframeRef }) => (
 const MobilePlayground = ({ code, onCodeChange, iframeRef, activeTab, setActiveTab }) => {
     const [viewMode, setViewMode] = useState('mobile');
 
+     const tabIcons = {
+        html: <HtmlLogo />,
+        css: <CssLogo />,
+        js: <JsLogo />,
+        preview: <PreviewIcon />
+    };
+
+
     const renderContent = () => {
         if (viewMode === 'web') {
             return <DesktopPlayground code={code} onCodeChange={onCodeChange} iframeRef={iframeRef} />;
@@ -184,9 +205,15 @@ const MobilePlayground = ({ code, onCodeChange, iframeRef, activeTab, setActiveT
         <div className="playground-mobile-container">
             <div className="mobile-header">
                 <div className="mobile-tab-nav">
-                    {viewMode === 'mobile' && ['html', 'css', 'js', 'preview'].map(tab => (
-                        <button type="button" key={tab} onClick={() => setActiveTab(tab)} className={activeTab === tab ? 'active' : ''}>
-                            {tab.toUpperCase()}
+                    {viewMode === 'mobile' && Object.keys(tabIcons).map(tabName => (
+                        <button 
+                            type="button" 
+                            key={tabName} 
+                            onClick={() => setActiveTab(tabName)} 
+                            className={`mobile-tab-btn ${activeTab === tabName ? 'active' : ''}`}
+                            aria-label={tabName}
+                        >
+                            {tabIcons[tabName]}
                         </button>
                     ))}
                 </div>
@@ -236,7 +263,6 @@ const ProjectDetailPage = () => {
                 setTotalLikes(parseInt(data.total_likes, 10) || 0);
                 setLiked(data.is_liked_by_user === 1);
                 if (!viewCountedRef.current) {
-                    // This can be moved to an API service file
                     fetch('https://dreamcoded.com/api/interact.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_id: data.id, action: 'view' }) });
                     viewCountedRef.current = true;
                 }
@@ -263,8 +289,52 @@ const ProjectDetailPage = () => {
     };
 
     const handleLikeToggle = () => {
-        if (!loggedInUser) return showMessage("Please log in to like.", "error");
-        // ... (like logic remains the same)
+        if (!loggedInUser) {
+            showMessage("Please log in to like this project.", "error");
+            return;
+        }
+    
+        // --- Optimistic UI Update ---
+        const originalLikedState = liked;
+        const originalTotalLikes = totalLikes;
+    
+        const newLikedState = !originalLikedState;
+        const newTotalLikes = newLikedState ? originalTotalLikes + 1 : originalTotalLikes - 1;
+    
+        setLiked(newLikedState);
+        setTotalLikes(newTotalLikes);
+    
+        // --- API Call ---
+        const payload = {
+            project_id: project.id,
+            user_id: loggedInUser.id,
+            action: newLikedState ? 'like' : 'unlike'
+        };
+    
+        fetch('https://dreamcoded.com/api/interact.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Server responded with an error');
+            return res.json();
+        })
+        .then(data => {
+            if (data.status !== 'success') {
+                throw new Error(data.message || 'Failed to update like status');
+            }
+            // Optional: Sync with server's final count if needed
+            if (data.newTotal !== undefined) {
+                setTotalLikes(data.newTotal);
+            }
+        })
+        .catch(error => {
+            // --- Revert UI on Failure ---
+            setLiked(originalLikedState);
+            setTotalLikes(originalTotalLikes);
+            showMessage(error.message || "Couldn't save your like.", "error");
+        });
     };
     
     const handleSaveCode = async () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect to imports
 import { Link, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -8,7 +8,6 @@ import 'swiper/css/pagination';
 import './HomePage.css';
 import SkeletonCard from '../../components/Skeleton/SkeletonCard';
 
-// --- ProjectCard (unchanged) ---
 const ProjectCard = ({ app }) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -24,7 +23,7 @@ const ProjectCard = ({ app }) => {
     };
 
     const iframeSrcDoc = isHovered
-        ? `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}<\/script></body></html>`
+        ? `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}</script></body></html>`
         : '';
 
     return (
@@ -85,7 +84,6 @@ const ProjectCard = ({ app }) => {
     );
 };
 
-// --- CarouselRow (unchanged) ---
 const CarouselRow = ({ title, filter, tag }) => {
     const [apps, setApps] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -135,43 +133,29 @@ const CarouselRow = ({ title, filter, tag }) => {
     );
 };
 
-// --- Star (with strict cycle) ---
 const Star = () => {
-    const [state, setState] = useState(generateStarConfig());
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setState(generateStarConfig());
-        }, state.duration * 1000);
-
-        return () => clearTimeout(timeout);
-    }, [state.key]); // reset after each cycle
+    const [position] = useState({
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 0.5 + 0.5,
+        delay: Math.random() * 2
+    });
 
     return (
         <div
-            key={state.key}
-            className="star"
+            className="twinkle-star"
             style={{
-                top: `${state.top}%`,
-                left: `${state.left}%`,
-                animationDelay: `${state.delay}s`,
-                animationDuration: `${state.duration}s`,
+                top: `${position.top}%`,
+                left: `${position.left}%`,
+                fontSize: `${position.size}rem`,
+                animationDelay: `${position.delay}s`,
             }}
         >
-            *
+            ✦
         </div>
     );
 };
 
-const generateStarConfig = () => ({
-    top: Math.random() * 100,
-    left: Math.random() * 100,
-    delay: Math.random() * 2, // start offset
-    duration: 3 + Math.random() * 2, // total time for fade in/out
-    key: Math.random().toString(36).substring(2, 9), // forces DOM refresh
-});
-
-// --- HomePage ---
 const HomePage = () => {
     const { tagName } = useParams();
 

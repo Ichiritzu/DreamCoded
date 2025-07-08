@@ -32,32 +32,31 @@
     width: 100%;
     height: 100%;
     z-index: 0;
-    mask-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.8) 60%, transparent 100%);
+    pointer-events: none;
+    overflow: hidden;
 }
 
-.star {
+.twinkle-star {
     position: absolute;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary-color);
+    color: white;
     text-shadow: 0 0 10px var(--primary-color);
-    animation: starFade ease-in-out forwards;
+    animation: twinkle 1.6s infinite steps(10);
+    transform-origin: center;
+    will-change: transform, opacity;
 }
 
-@keyframes starFade {
-    0% {
-        opacity: 0;
-        transform: scale(0.5);
+@keyframes twinkle {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.6;
     }
     50% {
-        opacity: 0.8;
         transform: scale(1.5);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(0.5);
+        opacity: 1;
     }
 }
+
+
 
 
 

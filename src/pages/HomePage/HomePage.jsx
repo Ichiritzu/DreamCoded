@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -8,25 +8,31 @@ import 'swiper/css/pagination';
 import './HomePage.css';
 import SkeletonCard from '../../components/Skeleton/SkeletonCard';
 
-// --- Simplified ProjectCard Component ---
+// --- ProjectCard (unchanged) ---
 const ProjectCard = ({ app }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
     const getAvatarSrc = (app) => {
         if (app.author_avatar_url) {
-            return `https://dreamcoded.com${app.author_avatar_url}?v=${Date.now()}`;
+            return `https://dreamcoded.com${app.author_avatar_url}`;
         }
         return `https://ui-avatars.com/api/?name=${app.author}&background=161b22&color=c9d1d9&size=24`;
     };
 
-    // Stop click from bubbling up to a parent link
     const handleInnerLinkClick = (e) => {
         e.stopPropagation();
     };
-    
-    // The iframe content is now always present
-    const iframeSrcDoc = `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}<\/script></body></html>`;
+
+    const iframeSrcDoc = isHovered
+        ? `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}<\/script></body></html>`
+        : '';
 
     return (
-        <div className="card">
+        <div
+            className="card"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
             <Link to={`/project/${app.id}`} className="card-image-link">
                 <div className="card-image-container">
                     <iframe
@@ -42,13 +48,12 @@ const ProjectCard = ({ app }) => {
                 <h3 className="card-title">
                     <Link to={`/project/${app.id}`}>{app.title}</Link>
                 </h3>
-                
                 {app.tags && (
                     <div className="card-tags-container">
                         {app.tags.split(',').slice(0, 3).map(tag => (
-                            <Link 
-                                key={tag} 
-                                to={`/tag/${tag.trim()}`} 
+                            <Link
+                                key={tag}
+                                to={`/tag/${tag.trim()}`}
                                 className="tag-pill"
                                 onClick={handleInnerLinkClick}
                             >
@@ -57,16 +62,15 @@ const ProjectCard = ({ app }) => {
                         ))}
                     </div>
                 )}
-
                 <div className="card-footer">
-                    <Link 
-                        to={`/user/${app.author}`} 
+                    <Link
+                        to={`/user/${app.author}`}
                         className="card-author"
                         onClick={handleInnerLinkClick}
                     >
-                        <img 
-                            src={getAvatarSrc(app)} 
-                            alt={app.author} 
+                        <img
+                            src={getAvatarSrc(app)}
+                            alt={app.author}
                             className="card-avatar"
                         />
                         <span>{app.author}</span>
@@ -81,7 +85,7 @@ const ProjectCard = ({ app }) => {
     );
 };
 
-
+// --- CarouselRow (unchanged) ---
 const CarouselRow = ({ title, filter, tag }) => {
     const [apps, setApps] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -92,13 +96,10 @@ const CarouselRow = ({ title, filter, tag }) => {
         if (tag) {
             apiUrl = `https://dreamcoded.com/api.php?filter=tagged&tag=${tag}&t=${Date.now()}`;
         }
-        
         fetch(apiUrl)
             .then((res) => (res.ok ? res.json() : Promise.reject('Network error')))
-            .then((data) => {
-                setApps(data.projects || []);
-            })
-            .catch(() => { /* Handle error if needed */ })
+            .then((data) => { setApps(data.projects || []); })
+            .catch(() => {})
             .finally(() => setLoading(false));
     }, [filter, tag]);
 
@@ -125,7 +126,7 @@ const CarouselRow = ({ title, filter, tag }) => {
                 ) : (
                     apps.map((app) => (
                         <SwiperSlide key={app.id}>
-                           <ProjectCard app={app} />
+                            <ProjectCard app={app} />
                         </SwiperSlide>
                     ))
                 )}
@@ -134,25 +135,68 @@ const CarouselRow = ({ title, filter, tag }) => {
     );
 };
 
+// --- Star (with strict cycle) ---
+const Star = () => {
+    const [state, setState] = useState(generateStarConfig());
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setState(generateStarConfig());
+        }, state.duration * 1000);
+
+        return () => clearTimeout(timeout);
+    }, [state.key]); // reset after each cycle
+
+    return (
+        <div
+            key={state.key}
+            className="star"
+            style={{
+                top: `${state.top}%`,
+                left: `${state.left}%`,
+                animationDelay: `${state.delay}s`,
+                animationDuration: `${state.duration}s`,
+            }}
+        >
+            *
+        </div>
+    );
+};
+
+const generateStarConfig = () => ({
+    top: Math.random() * 100,
+    left: Math.random() * 100,
+    delay: Math.random() * 2, // start offset
+    duration: 3 + Math.random() * 2, // total time for fade in/out
+    key: Math.random().toString(36).substring(2, 9), // forces DOM refresh
+});
+
+// --- HomePage ---
 const HomePage = () => {
     const { tagName } = useParams();
 
     return (
         <div className="dc-page">
             {!tagName && (
-                 <section className="dc-hero">
-                     <h1 className="dc-title">DreamCoded</h1>
-                     <p className="dc-sub">Where digital dreams become interactive reality.</p>
-                 </section>
+                <section className="dc-hero">
+                    <div className="starfield-container">
+                        {Array.from({ length: 30 }).map((_, i) => (
+                            <Star key={i} />
+                        ))}
+                    </div>
+                    <div className="hero-content">
+                        <h1 className="dc-title">DreamCoded</h1>
+                        <p className="dc-sub">Where digital dreams become interactive reality.</p>
+                    </div>
+                </section>
             )}
-            
+
             <div className="page-content-wrapper">
                 {tagName ? (
-                    <CarouselRow 
-                        title={`Projects tagged with #${tagName}`} 
-                        filter="tagged" 
-                        tag={tagName} 
+                    <CarouselRow
+                        title={`Projects tagged with #${tagName}`}
+                        filter="tagged"
+                        tag={tagName}
                     />
                 ) : (
                     <>

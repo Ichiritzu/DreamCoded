@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect to imports
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -8,8 +8,51 @@ import 'swiper/css/pagination';
 import './HomePage.css';
 import SkeletonCard from '../../components/Skeleton/SkeletonCard';
 
-const ProjectCard = ({ app }) => {
+// --- Custom Hook to Detect When an Element is On-Screen ---
+const useOnScreen = (options) => {
+    const ref = useRef(null);
+    const [isIntersecting, setIntersecting] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            setIntersecting(entry.isIntersecting);
+        }, options);
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        const currentRef = ref.current;
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef);
+            }
+        };
+    }, [ref, options]);
+
+    return [ref, isIntersecting];
+};
+
+
+const ProjectCard = React.memo(({ app }) => {
+    const [cardRef, isVisible] = useOnScreen({ threshold: 0.1 });
     const [isHovered, setIsHovered] = useState(false);
+    const [allowAnimation, setAllowAnimation] = useState(true);
+    const timerRef = useRef(null);
+
+    useEffect(() => {
+        if (isVisible) {
+            setAllowAnimation(true);
+            timerRef.current = setTimeout(() => {
+                setAllowAnimation(false);
+            }, 10000);
+        } else {
+            clearTimeout(timerRef.current);
+            setAllowAnimation(false);
+        }
+        return () => clearTimeout(timerRef.current);
+    }, [isVisible]);
 
     const getAvatarSrc = (app) => {
         if (app.author_avatar_url) {
@@ -22,12 +65,18 @@ const ProjectCard = ({ app }) => {
         e.stopPropagation();
     };
 
-    const iframeSrcDoc = isHovered
-        ? `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}</script></body></html>`
-        : '';
+    // By using useMemo, this complex string is only rebuilt when necessary, not on every render.
+    const iframeSrcDoc = useMemo(() => {
+        if (!isVisible) return '';
+        if (isHovered || allowAnimation) {
+            return `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}<script>${app.code_js || ''}</script></body></html>`;
+        }
+        return `<!DOCTYPE html><html><head><style>${app.code_css || ''}</style></head><body>${app.code_html || ''}</body></html>`;
+    }, [isVisible, isHovered, allowAnimation, app]);
 
     return (
         <div
+            ref={cardRef}
             className="card"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -82,7 +131,7 @@ const ProjectCard = ({ app }) => {
             </div>
         </div>
     );
-};
+});
 
 const CarouselRow = ({ title, filter, tag }) => {
     const [apps, setApps] = useState([]);
@@ -133,29 +182,6 @@ const CarouselRow = ({ title, filter, tag }) => {
     );
 };
 
-const Star = () => {
-    const [position] = useState({
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        size: Math.random() * 0.5 + 0.5,
-        delay: Math.random() * 2
-    });
-
-    return (
-        <div
-            className="twinkle-star"
-            style={{
-                top: `${position.top}%`,
-                left: `${position.left}%`,
-                fontSize: `${position.size}rem`,
-                animationDelay: `${position.delay}s`,
-            }}
-        >
-            ✦
-        </div>
-    );
-};
-
 const HomePage = () => {
     const { tagName } = useParams();
 
@@ -163,11 +189,6 @@ const HomePage = () => {
         <div className="dc-page">
             {!tagName && (
                 <section className="dc-hero">
-                    <div className="starfield-container">
-                        {Array.from({ length: 30 }).map((_, i) => (
-                            <Star key={i} />
-                        ))}
-                    </div>
                     <div className="hero-content">
                         <h1 className="dc-title">DreamCoded</h1>
                         <p className="dc-sub">Where digital dreams become interactive reality.</p>

@@ -181,6 +181,28 @@ const CarouselRow = ({ title, filter, tag }) => {
         </section>
     );
 };
+const Star = () => {
+    const [position] = useState({
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 0.5 + 0.5,
+        delay: Math.random() * 2
+    });
+
+    return (
+        <div
+            className="twinkle-star"
+            style={{
+                top: `${position.top}%`,
+                left: `${position.left}%`,
+                fontSize: `${position.size}rem`,
+                animationDelay: `${position.delay}s`,
+            }}
+        >
+            ✦
+        </div>
+    );
+};
 
 const HomePage = () => {
     const { tagName } = useParams();
@@ -189,6 +211,11 @@ const HomePage = () => {
         <div className="dc-page">
             {!tagName && (
                 <section className="dc-hero">
+                    <div className="starfield-container">
+                        {Array.from({ length: 30 }).map((_, i) => (
+                            <Star key={i} />
+                        ))}
+                    </div>
                     <div className="hero-content">
                         <h1 className="dc-title">DreamCoded</h1>
                         <p className="dc-sub">Where digital dreams become interactive reality.</p>
@@ -213,5 +240,4 @@ const HomePage = () => {
         </div>
     );
 };
-
 export default HomePage;

@@ -3,7 +3,32 @@
 @import 'swiper/css/pagination';
 
 /* =================================================================
-   1. Page Layout & Upgraded Hero Section
+   TABLE OF CONTENTS
+   1. Animations (@keyframes)
+   2. Page Layout
+   3. Hero Section
+   4. Carousel & Swiper
+   5. Project Cards
+   6. Utility Classes
+   7. Media Queries
+   ================================================================= */
+
+/* =================================================================
+   1. Animations (@keyframes)
+   ================================================================= */
+@keyframes twinkle {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+}
+
+/* =================================================================
+   2. Page Layout
    ================================================================= */
 .dc-page {
     width: 100%;
@@ -17,6 +42,9 @@
     max-width: 1600px;
 }
 
+/* =================================================================
+   3. Hero Section
+   ================================================================= */
 .dc-hero {
     position: relative;
     padding: 6rem 1.5rem 8rem;
@@ -24,7 +52,32 @@
     overflow: hidden;
 }
 
-/* --- New Asterisk Starfield --- */
+.hero-content {
+    position: relative; 
+    z-index: 1;
+}
+
+.dc-title {
+    font-size: 4.5rem;
+    font-weight: 900;
+    margin: 0;
+    background: linear-gradient(135deg, #F472B6, #A78BFA, #3B82F6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+}
+
+.dc-sub {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
 .starfield-container {
     position: absolute;
     top: 0;
@@ -45,59 +98,8 @@
     will-change: transform, opacity;
 }
 
-@keyframes twinkle {
-    0%, 100% {
-        transform: scale(1);
-        opacity: 0.6;
-    }
-    50% {
-        transform: scale(1.5);
-        opacity: 1;
-    }
-}
-
-
-
-
-
-
-/* This new rule explicitly places the text content above the stars */
-.hero-content {
-    position: relative; 
-    z-index: 1;
-}
-
-/* This rule is no longer needed */
-/* .dc-hero > * {
-    position: relative;
-    z-index: 1;
-}
-*/
-
-.dc-title {
-    font-size: 4.5rem;
-    font-weight: 900;
-    margin: 0;
-    background: linear-gradient(90deg, #a78bfa, #60a5fa);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
-}
-
-.dc-sub {
-    font-size: 1.5rem;
-    color: var(--text-secondary);
-    margin-top: 1rem;
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
-}
-
-/* Other styles remain the same... */
 /* =================================================================
-   2. Carousel Row Layout
+   4. Carousel & Swiper
    ================================================================= */
 .carousel-section-wrapper {
     padding: 2.5rem 0;
@@ -114,8 +116,32 @@
     padding: 0.5rem 1.5rem 2.5rem !important;
 }
 
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--primary-color) !important;
+    background-color: rgba(22, 27, 34, 0.8);
+    backdrop-filter: blur(5px);
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50%;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+}
+
+.swiper-pagination-bullet {
+    background: var(--text-secondary) !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--primary-color) !important;
+}
+
 /* =================================================================
-   3. Redesigned Carousel Cards
+   5. Project Cards
    ================================================================= */
 .card {
     display: flex;
@@ -133,22 +159,54 @@
     box-shadow: 0 12px 30px rgba(139, 92, 246, 0.2);
 }
 
+/* --- Card Preview Area --- */
 .card-image-container {
     position: relative;
     overflow: hidden;
 }
 
-.card-image {
+.card-iframe-preview {
     width: 100%;
     aspect-ratio: 16 / 10;
-    object-fit: cover;
-    background-color: #2e3440;
-    display: block;
-    transition: transform 0.4s ease;
+    height: auto;
+    border: none;
+    background: #0d1117;
+    transition: transform 0.3s ease;
 }
 
-.card:hover .card-image {
-    transform: scale(1.05);
+.card:hover .card-iframe-preview {
+    transform: scale(1.01);
+}
+
+.card-static-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #1a1d24, #121418);
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.static-preview-content {
+    text-align: center;
+    color: #c9d1d9;
+}
+
+.static-preview-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.card-static-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    background-color: #0d1117;
 }
 
 .card-hover-overlay {
@@ -165,6 +223,7 @@
     opacity: 1;
 }
 
+/* --- Card Content & Footer --- */
 .card-content {
     padding: 1rem;
     display: flex;
@@ -192,45 +251,11 @@
     background-size: 100% 2px;
 }
 
-
-.card-footer {
-    margin-top: auto;
-    padding-top: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card-author {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-decoration: none;
-}
-.card-author:hover {
-    color: var(--primary-color);
-}
-
-.card-avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.card-stats {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
 .card-tags-container {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem; /* Space between tags and footer */
+    margin-bottom: 1rem;
 }
 
 .tag-pill {
@@ -249,44 +274,43 @@
     color: white;
 }
 
-.card-iframe-preview {
-    width: 100%;
-    height: 200px;
-    border: none;
-    background: #0d1117;
-    transition: transform 0.3s ease;
-}
-.card:hover .card-iframe-preview{
-    transform: scale(1.01);
+.card-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-/* =================================================================
-   4. Custom Swiper Arrow & Pagination Styles
-   ================================================================= */
-.swiper-button-next,
-.swiper-button-prev {
-    color: var(--primary-color) !important;
-    background-color: rgba(22, 27, 34, 0.8);
-    backdrop-filter: blur(5px);
-    width: 44px !important;
-    height: 44px !important;
+.card-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.card-author:hover {
+    color: var(--primary-color);
+}
+
+.card-avatar {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-}
-.swiper-button-next:after,
-.swiper-button-prev:after {
-    font-size: 1.25rem !important;
-    font-weight: 800 !important;
+    object-fit: cover;
 }
 
-.swiper-pagination-bullet {
-    background: var(--text-secondary) !important;
-}
-.swiper-pagination-bullet-active {
-    background: var(--primary-color) !important;
+.card-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }
 
 /* =================================================================
-   5. Utility & Mobile Responsiveness
+   6. Utility Classes
    ================================================================= */
 .dc-error, .dc-empty {
     width: 100%;
@@ -296,6 +320,9 @@
     color: var(--text-secondary);
 }
 
+/* =================================================================
+   7. Media Queries
+   ================================================================= */
 @media (max-width: 767px) {
     .page-content-wrapper {
         width: 100%;
@@ -317,47 +344,4 @@
     .dc-sub {
         font-size: 1.1rem;
     }
-}
-/* --- Card Preview Styles --- */
-
-/* This is the container for the new static title preview */
-.card-static-preview {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  background: linear-gradient(135deg, #1a1d24, #121418);
-  padding: 1.5rem;
-  box-sizing: border-box;
-}
-
-.static-preview-content {
-    text-align: center;
-    color: #c9d1d9;
-}
-
-.static-preview-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    word-break: break-word;
-}
-
-/* This is the style for when a dedicated image URL IS provided */
-.card-static-image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  background-color: #0d1117;
-}
-
-.card-iframe-preview {
-    width: 100%;
-    aspect-ratio: 16 / 10; /* Ensure iframe has same aspect ratio */
-    height: auto;
-    border: none;
-    background: #0d1117;
-    transition: transform 0.3s ease;
 }

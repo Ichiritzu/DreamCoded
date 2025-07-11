@@ -156,3 +156,44 @@
 .signin-button:hover {
     background-color: var(--primary-hover);
 }
+.version-toast {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #161b22;
+  color: #fff;
+  border: 1px solid #7e0fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(126, 15, 255, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeInSlide 0.4s ease forwards;
+  z-index: 9999;
+}
+
+.version-toast button {
+  background-color: #7e0fff;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.version-toast button:hover {
+  background-color: #9a35ff;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

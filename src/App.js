@@ -21,8 +21,11 @@ import SettingsPage from './pages/SettingsPage/SettingsPage';
 // NEW: Import the ResetPasswordPage
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
 import ScrollEditorTest from './pages/ScrollEditorTest';
+import useVersionCheck from './hooks/useVersionCheck';
+
 
 function App() {
+  useVersionCheck();
   return (
     <MessageProvider>
       <Router>

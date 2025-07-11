@@ -51,16 +51,14 @@ const ProfileDropdown = ({ user }) => {
 
 const Header = () => {
     const [user, setUser] = useState(null);
-    // NEW: Add state for the page title
     const [pageTitle, setPageTitle] = useState('Home');
-    
-    // NEW: Get the current location object
+
+    const [versionToast, setVersionToast] = useState(false); // 🚨 new state
+
     const location = useLocation();
 
-    // NEW: useEffect to update the title based on the current path
     useEffect(() => {
         const path = location.pathname;
-
         if (path === '/') setPageTitle('Home');
         else if (path === '/auth') setPageTitle('Authentication');
         else if (path.startsWith('/project/')) setPageTitle('Edit Dream');
@@ -69,9 +67,8 @@ const Header = () => {
         else if (path === '/submit') setPageTitle('Dream');
         else if (path === '/settings') setPageTitle('Settings');
         else if (path.startsWith('/reset-password/')) setPageTitle('Reset Password');
-        else setPageTitle('DreamCoded'); // Fallback title
-
-    }, [location]); // Re-run this effect whenever the location changes
+        else setPageTitle('DreamCoded');
+    }, [location]);
 
     useEffect(() => {
         const handleAuthChange = () => {
@@ -96,28 +93,36 @@ const Header = () => {
 
         handleAuthChange();
         window.addEventListener('dreamcoded-auth-change', handleAuthChange);
+        window.addEventListener('dreamcoded-version-update', () => setVersionToast(true)); // 🆕 custom event
+
         return () => {
             window.removeEventListener('dreamcoded-auth-change', handleAuthChange);
+            window.removeEventListener('dreamcoded-version-update', () => setVersionToast(true));
         };
     }, []);
 
     return (
         <header className="header-container">
             <div className="header-title-container">
-                {/* MODIFIED: Use the dynamic pageTitle state */}
                 <h2>{pageTitle}</h2>
             </div>
             <div className="header-user-container">
                 {user ? (
                     <ProfileDropdown user={user} />
                 ) : (
-                    <Link to="/auth" className="signin-button">
-                        Sign In
-                    </Link>
+                    <Link to="/auth" className="signin-button">Sign In</Link>
                 )}
             </div>
+
+            {versionToast && (
+                <div className="version-toast">
+                    <span>A new version is available.</span>
+                    <button onClick={() => window.location.reload()}>Refresh</button>
+                </div>
+            )}
         </header>
     );
 };
+
 
 export default Header;

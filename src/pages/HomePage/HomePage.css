@@ -113,8 +113,11 @@
 }
 
 .mySwiper {
-    padding: 0.5rem 1.5rem 2.5rem !important;
+  padding: 0.5rem 1.5rem 2.5rem !important;
+  transition: height 0.3s ease-in-out;
+  min-height: 420px;
 }
+
 
 .swiper-button-next,
 .swiper-button-prev {
@@ -144,15 +147,18 @@
    5. Project Cards
    ================================================================= */
 .card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: var(--card-bg);
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 380px;
+  max-height: 420px;
+  background-color: var(--card-bg);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 
 .card:hover {
     transform: translateY(-8px);
@@ -161,18 +167,21 @@
 
 /* --- Card Preview Area --- */
 .card-image-container {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+  flex: 0 0 auto;
 }
 
 .card-iframe-preview {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    height: auto;
-    border: none;
-    background: #0d1117;
-    transition: transform 0.3s ease;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #0d1117;
+  transition: transform 0.3s ease;
+  display: block;
 }
+
 
 .card:hover .card-iframe-preview {
     transform: scale(1.01);
@@ -344,4 +353,36 @@
     .dc-sub {
         font-size: 1.1rem;
     }
+}
+
+.iframe-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1f1f2e, #292940, #1a1a26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  color: #ccc;
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  transition: background 0.3s ease;
+}
+
+
+.placeholder-title {
+  max-width: 90%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.05rem;
+  color: var(--primary-light, #c9d1d9);
+  opacity: 0.85;
+  text-align: center;
+}
+.card-image-link {
+    text-decoration: none;
 }

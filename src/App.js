@@ -20,7 +20,6 @@ import SearchResultsPage from './pages/SearchResultsPage/SearchResultsPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 // NEW: Import the ResetPasswordPage
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
-import ScrollEditorTest from './pages/ScrollEditorTest';
 import useVersionCheck from './hooks/useVersionCheck';
 
 
@@ -44,7 +43,6 @@ function App() {
                 <Route path="/user/:username" element={<UserProfilePage />} />
                 <Route path="/search" element={<SearchResultsPage />} />
                 <Route path="/tag/:tagName" element={<HomePage />} />
-                <Route path="/test-scroll" element={<ScrollEditorTest />} />
                 
                 {/* NEW: Route for handling password reset links */}
                 <Route path="/reset-password/:token" element={<ResetPasswordPage />} />

@@ -23,8 +23,8 @@
   left: 0;
   height: 3px;
   width: 100%;
-  background: linear-gradient(270deg, #0fffc1, #7e0fff, #0fffc1);
-  background-size: 200% 200%;
+  background: linear-gradient(270deg, #ff2da7, #a64fff, #1da1f2);
+  background-size: 300% 300%;
   animation: animateGlow 8s ease infinite;
   pointer-events: none;
   z-index: -1;

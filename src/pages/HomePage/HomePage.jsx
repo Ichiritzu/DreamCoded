@@ -29,6 +29,7 @@ const useOnScreen = (options) => {
   return [ref, isIntersecting];
 };
 
+
 const ProjectCard = React.memo(({ app, isVisibleSlide }) => {
   const [cardRef, isVisible] = useOnScreen({ threshold: 0.1 });
   const [isHovered, setIsHovered] = useState(false);
@@ -55,11 +56,15 @@ const ProjectCard = React.memo(({ app, isVisibleSlide }) => {
   const handleInnerLinkClick = (e) => e.stopPropagation();
 
   const iframeSrcDoc = useMemo(() => {
-    if (!isVisible || !isVisibleSlide) return '';
-    const iframeStyles = `body { margin: 0; overflow: hidden; }`;
-    const includeJS = isHovered || allowAnimation ? `<script>${app.code_js || ''}</script>` : '';
-    return `<!DOCTYPE html><html><head><style>${iframeStyles} ${app.code_css || ''}</style></head><body>${app.code_html || ''}${includeJS}</body></html>`;
-  }, [isVisible, isVisibleSlide, isHovered, allowAnimation, app]);
+  if (!(isVisible && isVisibleSlide)) return null;
+
+  const iframeStyles = `body { margin: 0; overflow: hidden; }`;
+  const includeJS = isHovered || allowAnimation
+    ? `<script>${app.code_js || ''}</script>`
+    : '';
+
+  return `<!DOCTYPE html><html><head><style>${iframeStyles}${app.code_css || ''}</style></head><body>${app.code_html || ''}${includeJS}</body></html>`;
+}, [isVisible, isVisibleSlide, isHovered, allowAnimation, app]);
 
   return (
     <div
@@ -68,20 +73,32 @@ const ProjectCard = React.memo(({ app, isVisibleSlide }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link to={`/project/${app.id}`} className="card-image-link">
+      <Link
+  to={isVisibleSlide ? `/project/${app.id}` : '#'}
+  onClick={(e) => {
+    if (!isVisibleSlide) e.preventDefault(); // Prevent navigation from offset cards
+  }}
+  className="card-image-link"
+>
+
         <div className="card-image-container">
-          {iframeSrcDoc ? (
-            <iframe
-              srcDoc={iframeSrcDoc}
-              title={app.title}
-              sandbox="allow-scripts"
-              className="card-iframe-preview"
-            />
-          ) : (
-            <div className="iframe-placeholder">Preview</div>
-          )}
-          <div className="card-hover-overlay"></div>
-        </div>
+  {iframeSrcDoc ? (
+    <iframe
+      key={app.id} // forces reload when app changes
+      srcDoc={iframeSrcDoc}
+      title={app.title}
+      sandbox="allow-scripts"
+      className="card-iframe-preview"
+      loading="lazy"
+    />
+  ) : (
+    <div className="iframe-placeholder">
+      <span className="placeholder-title">{app.title}</span>
+    </div>
+  )}
+</div>
+
+
       </Link>
       <div className="card-content">
         <h3 className="card-title">
@@ -121,6 +138,8 @@ const ProjectCard = React.memo(({ app, isVisibleSlide }) => {
 });
 
 const CarouselRow = ({ title, filter, tag }) => {
+    
+  const [swiperInstance, setSwiperInstance] = useState(null);
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -142,28 +161,34 @@ const CarouselRow = ({ title, filter, tag }) => {
     <section className="carousel-section-wrapper">
       <h2 className="carousel-section-title">{title}</h2>
       <Swiper
-        modules={[Navigation, Pagination]}
-        spaceBetween={30}
-        slidesPerView={1.25}
-        centeredSlides={false}
-        pagination={{ clickable: true }}
-        navigation={true}
-        onSlideChange={(swiper) => setCurrentIndex(swiper.activeIndex)}
-        breakpoints={{
-          640: { slidesPerView: 2, spaceBetween: 20, centeredSlides: false },
-          1024: { slidesPerView: 3, spaceBetween: 30, centeredSlides: false },
-        }}
-        className="mySwiper"
-      >
+  modules={[Navigation, Pagination]}
+  spaceBetween={30}
+  centeredSlides={true}
+  pagination={{ clickable: true }}
+  navigation={true}
+  onSwiper={setSwiperInstance}
+  onSlideChange={(swiper) => setCurrentIndex(swiper.activeIndex)}
+  breakpoints={{
+    640: { slidesPerView: 2.5, centeredSlides: true },
+    1024: { slidesPerView: 3.5, centeredSlides: true }
+  }}
+  className="mySwiper"
+>
+
         {loading ? (
           Array.from({ length: 5 }).map((_, idx) => (
             <SwiperSlide key={idx}><SkeletonCard /></SwiperSlide>
           ))
         ) : (
           apps.map((app, index) => (
-            <SwiperSlide key={app.id}>
-              <ProjectCard app={app} isVisibleSlide={index === currentIndex} />
-            </SwiperSlide>
+            <SwiperSlide
+  key={app.id}
+  onClick={() => swiperInstance?.slideTo(index)}
+  style={{ cursor: 'pointer' }}
+>
+  <ProjectCard app={app} isVisibleSlide={index === currentIndex} />
+</SwiperSlide>
+
           ))
         )}
       </Swiper>

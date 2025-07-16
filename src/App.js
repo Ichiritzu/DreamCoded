@@ -21,12 +21,14 @@ import SettingsPage from './pages/SettingsPage/SettingsPage';
 // NEW: Import the ResetPasswordPage
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
 import useVersionCheck from './hooks/useVersionCheck';
+import { UserProvider } from './context/UserContext';
 
 
 function App() {
   useVersionCheck();
   return (
     <MessageProvider>
+      <UserProvider>
       <Router>
         <div className="app-layout">
           <GlobalMessage />
@@ -71,6 +73,7 @@ function App() {
 
         </div>
       </Router>
+      </UserProvider>
     </MessageProvider>
   );
 }

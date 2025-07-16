@@ -1,31 +1,42 @@
-import React, { createContext, useState, useCallback, useContext } from 'react';
+import React, { createContext, useState, useCallback, useContext, useEffect } from 'react';
 
-// 1. Create the context
 const MessageContext = createContext();
-
-// 2. Create a custom hook to easily use the context elsewhere
 export const useMessage = () => useContext(MessageContext);
 
-// 3. Create the Provider component
 export const MessageProvider = ({ children }) => {
-  const [message, setMessage] = useState(null); // Will be an object like { text, type }
+  const [message, setMessage] = useState(null);
 
-  const showMessage = useCallback((text, type = 'success') => {
-    setMessage({ text, type });
-    // Automatically hide the message after 4 seconds
+  useEffect(() => {
+    const savedMessage = sessionStorage.getItem('globalMessage');
+    if (savedMessage) {
+      const parsed = JSON.parse(savedMessage);
+      setMessage(parsed);
+      sessionStorage.removeItem('globalMessage');
+      setTimeout(() => setMessage(null), 4000);
+    }
+  }, []);
+
+  const showMessage = useCallback((text, type = 'success', persist = false) => {
+    const msgObj = { text, type };
+    setMessage(msgObj);
+
+    if (persist) {
+      sessionStorage.setItem('globalMessage', JSON.stringify(msgObj));
+    }
+
     setTimeout(() => {
       setMessage(null);
+      sessionStorage.removeItem('globalMessage');
     }, 4000);
   }, []);
 
   const hideMessage = () => {
     setMessage(null);
+    sessionStorage.removeItem('globalMessage');
   };
 
-  const value = { message, showMessage, hideMessage };
-
   return (
-    <MessageContext.Provider value={value}>
+    <MessageContext.Provider value={{ message, showMessage, hideMessage }}>
       {children}
     </MessageContext.Provider>
   );

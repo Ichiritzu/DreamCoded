@@ -1,43 +1,83 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE } from '../api';
 
 const UserContext = createContext();
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser]       = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
 
-    // This function will be called on app load to check for a session
-    const checkUserSession = async () => {
-        try {
-            // Use the relative path for the proxy
-            const res = await fetch('/api/me.php', {
-                credentials: 'include'
-            });
-            const data = await res.json();
-            if (data.success && data.user) {
-                setUser(data.user);
-            } else {
-                setUser(null);
-            }
-        } catch (err) {
-            setUser(null);
-        } finally {
-            setLoading(false);
+  const checkUserSession = async () => {
+    setLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/me.php`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-    };
+      });
 
-    // Check for a session when the app first loads
-    useEffect(() => {
-        checkUserSession();
-    }, []);
+      // Read raw text for debugging
+      const raw = await res.text();
+      console.log('RAW me.php response:', raw);
 
-    // The value provided to the rest of the app
-    const value = { user, setUser, loading, refreshUser: checkUserSession };
-    
-    return (
-        <UserContext.Provider value={value}>
-            {!loading && children}
-        </UserContext.Provider>
-    );
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch (parseErr) {
+        throw new Error(`Invalid JSON from me.php: ${parseErr.message}`);
+      }
+
+      if (data.success && data.user) {
+        let avatar = data.user.avatar_url || '';
+        if (avatar.startsWith('/')) {
+          avatar = `https://dreamcoded.com${avatar}`;
+        }
+        setUser({ ...data.user, avatar_url: avatar });
+      } else {
+        // handle 401 or missing user
+        localStorage.removeItem('token');
+        setUser(null);
+        setError(data.error || 'Not authenticated');
+      }
+    } catch (err) {
+      console.error('Session check failed:', err);
+      // Clean up on any failure
+      localStorage.removeItem('token');
+      setUser(null);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkUserSession();
+  }, []);
+
+  const value = {
+    user,
+    loading,
+    error,
+    refreshUser: checkUserSession,
+    setUser
+  };
+
+  // Optionally, you could render an error UI here if error is non-null
+  return (
+    <UserContext.Provider value={value}>
+      {!loading && children}
+    </UserContext.Provider>
+  );
 };

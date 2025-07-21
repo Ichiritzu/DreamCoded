@@ -11,17 +11,20 @@ import { materialDark } from '@uiw/codemirror-theme-material';
 import { githubDark } from '@uiw/codemirror-theme-github';
 import { useWindowWidth } from '../../hooks/useWindowWidth';
 import { useMessage } from '../../context/MessageContext';
+import { useUser } from '../../context/UserContext';
+import { API_BASE } from '../../api';
 import './ProjectDetailPage.css';
 
 // --- Reusable Hook ---
 function useDebounce(value, delay = 500) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-    useEffect(() => {
-        const handler = setTimeout(() => setDebouncedValue(value), delay);
-        return () => clearTimeout(handler);
-    }, [value, delay]);
-    return debouncedValue;
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
 }
+
 
 // --- Icon Components ---
 const HeartIcon = () => ( <svg className="heart-svg" viewBox="0 0 24 24" width="24" height="24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> );
@@ -243,235 +246,251 @@ const MobilePlayground = ({ code, onCodeChange, iframeRef, activeTab, setActiveT
 
 // --- Main Page Component ---
 const ProjectDetailPage = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const { showMessage } = useMessage();
-    const windowWidth = useWindowWidth();
-    const loggedInUser = useMemo(() => JSON.parse(localStorage.getItem('dreamcodedUser')), []);
-    
-    const iframeRef = useRef(null);
-    const viewCountedRef = useRef(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { showMessage } = useMessage();
+  const { user: loggedInUser } = useUser();
+  const windowWidth = useWindowWidth();
+  const iframeRef = useRef(null);
+  const viewCountedRef = useRef(false);
+  const token = localStorage.getItem('token');
 
-    const [project, setProject] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [code, setCode] = useState({ html: '', css: '', js: '' });
-    const [liked, setLiked] = useState(false);
-    const [totalLikes, setTotalLikes] = useState(0);
-    const [isSaving, setIsSaving] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [activeMobileTab, setActiveMobileTab] = useState('html');
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [project, setProject] = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
+  const [code, setCode]         = useState({ html:'', css:'', js:'' });
+  const [liked, setLiked]       = useState(false);
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [activeMobileTab, setActiveMobileTab] = useState('html');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [editorTheme, setEditorTheme] = useState(localStorage.getItem('dreamcoded_editor_theme') || 'dracula');
 
-    const [editorTheme, setEditorTheme] = useState(() => localStorage.getItem('dreamcoded_editor_theme') || 'dracula');
-    const themeMap = { dracula, material: materialDark, github: githubDark };
+  const themeMap = { dracula, material: materialDark, github: githubDark };
+  const debouncedCode = useDebounce(code);
 
-    const debouncedCode = useDebounce(code);
-    
-    useEffect(() => {
-        const userIdParam = loggedInUser ? `&user_id=${loggedInUser.id}` : '';
-        fetch(`https://dreamcoded.com/api/project.php?id=${id}${userIdParam}&t=${Date.now()}`)
-            .then(res => res.ok ? res.json() : Promise.reject('Project not found'))
-            .then(data => {
-                const tagsArray = data.tags_string ? data.tags_string.split(',').filter(t => t) : [];
-                setProject({ ...data, tags: tagsArray });
-                setCode({ html: data.code_html || '', css: data.code_css || '', js: data.code_js || '' });
-                setTotalLikes(parseInt(data.total_likes, 10) || 0);
-                setLiked(data.is_liked_by_user === 1);
-                if (!viewCountedRef.current) {
-                    fetch('https://dreamcoded.com/api/interact.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_id: data.id, action: 'view' }) });
-                    viewCountedRef.current = true;
-                }
-            })
-            .catch(err => setError(err.message))
-            .finally(() => setLoading(false));
-    }, [id, loggedInUser]);
-
-    useEffect(() => {
-        const iframe = iframeRef.current;
-        if (!iframe) return;
-        if (windowWidth < 768 && activeMobileTab !== 'preview') return;
-        const htmlContent = `<!DOCTYPE html><html><head><style>${debouncedCode.css}</style></head><body>${debouncedCode.html}<script>try { ${debouncedCode.js} } catch(e) { console.error(e) }</script></body></html>`;
-        iframe.srcdoc = htmlContent;
-    }, [debouncedCode, activeMobileTab, windowWidth]);
-
-    const handleCodeChange = (value, editorName) => {
-        if (!project || (loggedInUser?.id !== project.user_id)) {
-            showMessage("You can't edit this project.", "error");
-            return;
-        }
-        setCode(prev => ({ ...prev, [editorName]: value }));
-    };
-
-    const handleLikeToggle = () => {
-        if (!loggedInUser) {
-            showMessage("Please log in to like this project.", "error");
-            return;
-        }
-    
-        const originalLikedState = liked;
-        const originalTotalLikes = totalLikes;
-        const newLikedState = !originalLikedState;
-        const newTotalLikes = newLikedState ? originalTotalLikes + 1 : originalTotalLikes - 1;
-        setLiked(newLikedState);
-        setTotalLikes(newTotalLikes);
-    
-        const payload = { project_id: project.id, user_id: loggedInUser.id, action: newLikedState ? 'like' : 'unlike' };
-    
-        fetch('https://dreamcoded.com/api/interact.php', {
+  // Fetch project data
+  useEffect(() => {
+    const userParam = loggedInUser ? `&user_id=${loggedInUser.id}` : '';
+    fetch(`${API_BASE}/project.php?id=${id}${userParam}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.ok ? res.json() : Promise.reject('Project not found'))
+      .then(data => {
+        if (data.error) throw new Error(data.error);
+        const tagsArray = data.tags_string?.split(',').filter(t=>t) || [];
+        setProject({ ...data, tags: tagsArray });
+        setCode({ html: data.code_html||'', css: data.code_css||'', js: data.code_js||'' });
+        setTotalLikes(parseInt(data.total_likes,10)||0);
+        setLiked(data.is_liked_by_user===1);
+        // count the view once
+        if (!viewCountedRef.current) {
+          fetch(`${API_BASE}/interact.php`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Server responded with an error');
-            return res.json();
-        })
-        .then(data => {
-            if (data.status !== 'success') throw new Error(data.message || 'Failed to update like status');
-            if (data.newTotal !== undefined) setTotalLikes(data.newTotal);
-        })
-        .catch(error => {
-            setLiked(originalLikedState);
-            setTotalLikes(originalTotalLikes);
-            showMessage(error.message || "Couldn't save your like.", "error");
-        });
-    };
-    
-    const handleSaveCode = async () => {
-        if (!iframeRef.current) {
-            showMessage('Preview is not ready. Cannot generate thumbnail.', 'error');
-            return;
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ project_id: data.id, action:'view' })
+          });
+          viewCountedRef.current = true;
         }
-        setIsSaving(true);
-        showMessage('Saving code and generating thumbnail...', 'info');
-        try {
-            const dataUrl = await htmlToImage.toPng(iframeRef.current, {
-                width: 800,
-                height: 500,
-                pixelRatio: 1
-            });
-            const payload = { 
-                project_id: project.id, 
-                user_id: loggedInUser.id, 
-                code_html: code.html,
-                code_css: code.css,
-                code_js: code.js,
-                image_data: dataUrl
-            };
-            const res = await fetch('https://dreamcoded.com/api/update.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const data = await res.json();
-            if (data.status !== 'success') throw new Error(data.message);
-            showMessage(data.message, 'success');
-            if (data.new_url) {
-                setProject(prev => ({ ...prev, image_url: data.new_url }));
-            }
-        } catch (err) {
-            showMessage(`Save failed: ${err.message}`, 'error');
-        } finally {
-            setIsSaving(false);
-        }
-    };
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [id, loggedInUser, token]);
 
-    const handleDetailsUpdate = async (updatedDetails) => {
-        const payload = {
-            project_id: project.id,
-            user_id: loggedInUser.id,
-            title: updatedDetails.title,
-            description: updatedDetails.description,
-            tags: updatedDetails.tags.join(','),
-        };
-        try {
-            const res = await fetch('https://dreamcoded.com/api/update.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const data = await res.json();
-            if (data.status === 'success') {
-                setProject(prev => ({ ...prev, ...updatedDetails, tags: updatedDetails.tags }));
-                setIsSettingsOpen(false);
-                showMessage('Details updated successfully!', 'success');
-            } else {
-                throw new Error(data.message);
-            }
-        } catch (err) {
-            showMessage(`Failed to update details: ${err.message}`, 'error');
-        }
-    };
-    
-    const handleDelete = async () => {
-        if (!window.confirm("Are you sure you want to permanently delete this Dream? This cannot be undone.")) return;
-        setIsDeleting(true);
-        try {
-            const res = await fetch('https://dreamcoded.com/api/delete.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_id: project.id, user_id: loggedInUser.id }) });
-            const data = await res.json();
-            if (data.status === 'success') {
-                showMessage('Dream deleted!', 'success');
-                navigate('/');
-            } else {
-                throw new Error(data.message);
-            }
-        } catch (err) {
-            showMessage(`Delete failed: ${err.message}`, 'error');
-        } finally {
-            setIsDeleting(false);
-        }
-    };
+  // Update the live preview iframe
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    if (windowWidth < 768 && activeMobileTab !== 'preview') return;
+    const htmlContent = `<!DOCTYPE html><html><head><style>${debouncedCode.css}</style></head><body>${debouncedCode.html}<script>try{${debouncedCode.js}}catch(e){}</script></body></html>`;
+    iframe.srcdoc = htmlContent;
+  }, [debouncedCode, activeMobileTab, windowWidth]);
 
-    const handleThemeChange = (newTheme) => {
-        setEditorTheme(newTheme);
-        localStorage.setItem('dreamcoded_editor_theme', newTheme);
-    };
+  // Handlers
+  const handleCodeChange = (value, name) => {
+    if (!project || loggedInUser?.id !== project.user_id) {
+      showMessage("You can't edit this project.", 'error');
+      return;
+    }
+    setCode(prev => ({ ...prev, [name]: value }));
+  };
 
-    if (loading) return <p className="page-message">Loading Dream...</p>;
-    if (error) return <p className="page-message error">Error: {error}</p>;
-    if (!project) return <p className="page-message">Project could not be loaded.</p>;
-    
-    const isOwner = loggedInUser && loggedInUser.id === project.user_id;
+  const handleLikeToggle = () => {
+    if (!loggedInUser) {
+      showMessage("Please log in to like this project.", 'error');
+      return;
+    }
+    const origLiked = liked, origCount = totalLikes;
+    const newLiked = !origLiked;
+    setLiked(newLiked);
+    setTotalLikes(newLiked ? origCount+1 : origCount-1);
 
-    return (
-        <div className="page-container">
-            <div className="playground-container">
-                <PlaygroundHeader
-                    project={project}
-                    onLike={handleLikeToggle}
-                    onSave={handleSaveCode}
-                    onDelete={handleDelete}
-                    onSettings={() => setIsSettingsOpen(true)}
-                    isOwner={isOwner}
-                    isSaving={isSaving}
-                    isDeleting={isDeleting}
-                    liked={liked}
-                    totalLikes={totalLikes}
-                />
-                {windowWidth < 768 ? (
-                    <MobilePlayground 
-                        code={code} 
-                        onCodeChange={handleCodeChange} 
-                        iframeRef={iframeRef} 
-                        activeTab={activeMobileTab} 
-                        setActiveTab={setActiveMobileTab}
-                        themeMap={themeMap}
-                        editorTheme={editorTheme}
-                    />
-                ) : (
-                    <DesktopPlayground 
-                        code={code} 
-                        onCodeChange={handleCodeChange} 
-                        iframeRef={iframeRef}
-                        themeMap={themeMap}
-                        editorTheme={editorTheme}
-                    />
-                )}
-            </div>
-            
-            <SettingsModal
-                isOpen={isSettingsOpen}
-                onClose={() => setIsSettingsOpen(false)}
-                project={project}
-                onDetailsSave={handleDetailsUpdate}
-                currentTheme={editorTheme}
-                onThemeChange={handleThemeChange}
-            />
-        </div>
-    );
+    fetch(`${API_BASE}/interact.php`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ project_id: project.id, action: newLiked?'like':'unlike' })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status!=='success') throw new Error(data.message||'Error');
+        if (data.newTotal!==undefined) setTotalLikes(data.newTotal);
+      })
+      .catch(err => {
+        setLiked(origLiked);
+        setTotalLikes(origCount);
+        showMessage(err.message||"Couldn't update like.", 'error');
+      });
+  };
+
+  const handleSaveCode = async () => {
+    if (!iframeRef.current) {
+      showMessage('Preview not ready.', 'error');
+      return;
+    }
+    setIsSaving(true);
+    showMessage('Saving and generating thumbnail…', 'info');
+    try {
+      const dataUrl = await htmlToImage.toPng(iframeRef.current, { width:800, height:500 });
+      const payload = {
+        project_id: project.id,
+        code_html: code.html,
+        code_css: code.css,
+        code_js: code.js,
+        image_data: dataUrl
+      };
+      const res = await fetch(`${API_BASE}/update.php`, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.status!=='success') throw new Error(data.message);
+      showMessage(data.message, 'success');
+      if (data.new_url) {
+        setProject(p=>({ ...p, image_url: data.new_url }));
+      }
+    } catch (err) {
+      showMessage(`Save failed: ${err.message}`, 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDetailsUpdate = async (updated) => {
+    setIsSaving(true);
+    try {
+      const payload = {
+        project_id: project.id,
+        title: updated.title,
+        description: updated.description,
+        tags: updated.tags.join(',')
+      };
+      const res = await fetch(`${API_BASE}/update.php`, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.status!=='success') throw new Error(data.message);
+      setProject(p=>({ ...p, ...updated, tags: updated.tags }));
+      setIsSettingsOpen(false);
+      showMessage('Details updated!', 'success');
+    } catch (err) {
+      showMessage(`Update failed: ${err.message}`, 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Really delete this Dream?')) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`${API_BASE}/delete.php`, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ project_id: project.id })
+      });
+      const data = await res.json();
+      if (data.status!=='success') throw new Error(data.message);
+      showMessage('Dream deleted!', 'success');
+      navigate('/');
+    } catch (err) {
+      showMessage(`Delete failed: ${err.message}`, 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  if (loading) return <p className="page-message">Loading Dream…</p>;
+  if (error)   return <p className="page-message error">Error: {error}</p>;
+  if (!project) return <p className="page-message">Project not found.</p>;
+
+  const isOwner = loggedInUser?.id === project.user_id;
+
+  return (
+    <div className="page-container">
+      <div className="playground-container">
+        <PlaygroundHeader
+          project={project}
+          onLike={handleLikeToggle}
+          onSave={handleSaveCode}
+          onDelete={handleDelete}
+          onSettings={()=>setIsSettingsOpen(true)}
+          isOwner={isOwner}
+          isSaving={isSaving}
+          isDeleting={isDeleting}
+          liked={liked}
+          totalLikes={totalLikes}
+        />
+
+        {windowWidth < 768 ? (
+          <MobilePlayground
+            code={code}
+            onCodeChange={handleCodeChange}
+            iframeRef={iframeRef}
+            activeTab={activeMobileTab}
+            setActiveTab={setActiveMobileTab}
+            themeMap={themeMap}
+            editorTheme={editorTheme}
+          />
+        ) : (
+          <DesktopPlayground
+            code={code}
+            onCodeChange={handleCodeChange}
+            iframeRef={iframeRef}
+            themeMap={themeMap}
+            editorTheme={editorTheme}
+          />
+        )}
+      </div>
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={()=>setIsSettingsOpen(false)}
+        project={project}
+        onDetailsSave={handleDetailsUpdate}
+        currentTheme={editorTheme}
+        onThemeChange={setEditorTheme}
+      />
+    </div>
+  );
 };
 
 export default ProjectDetailPage;

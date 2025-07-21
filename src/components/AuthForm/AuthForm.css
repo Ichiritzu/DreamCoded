@@ -238,3 +238,51 @@
     color: var(--primary-color);
     text-decoration: underline;
 }
+/* --- Validation & Error Styles --- */
+.error-text {
+    color: #ef4444; /* Red for errors */
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: left;
+    margin-top: 0.25rem;
+    padding-left: 0.5rem;
+}
+
+/* --- Password Strength Meter Styles --- */
+.strength-meter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+
+.strength-bars {
+    display: flex;
+    gap: 0.25rem;
+    flex-grow: 1;
+}
+
+.strength-bar {
+    height: 6px;
+    width: 25%;
+    background-color: var(--button-bg);
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
+}
+
+.strength-bar.filled.weak { background-color: #ef4444; }
+.strength-bar.filled.medium { background-color: #f59e0b; }
+.strength-bar.filled.strong { background-color: #10b981; }
+.strength-bar.filled.very { background-color: #22c55e; }
+
+.strength-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.strength-text.weak { color: #ef4444; }
+.strength-text.medium { color: #f59e0b; }
+.strength-text.strong { color: #10b981; }
+.strength-text.very { color: #22c55e; }

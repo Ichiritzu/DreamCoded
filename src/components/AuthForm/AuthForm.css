@@ -274,7 +274,7 @@
 .strength-bar.filled.weak { background-color: #ef4444; }
 .strength-bar.filled.medium { background-color: #f59e0b; }
 .strength-bar.filled.strong { background-color: #10b981; }
-.strength-bar.filled.very { background-color: #22c55e; }
+.strength-bar.filled.very-strong { background-color: #22c55e; }
 
 .strength-text {
     font-size: 0.8rem;
@@ -285,4 +285,36 @@
 .strength-text.weak { color: #ef4444; }
 .strength-text.medium { color: #f59e0b; }
 .strength-text.strong { color: #10b981; }
-.strength-text.very { color: #22c55e; }
+.strength-text.very-strong { color: #22c55e; }
+
+/* make the icon-input container only wrap the input itself */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+/* icon sits over the input, vertically centered */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+}
+
+/* ensure your input has left padding for the icon */
+.auth-form input {
+  padding: 0.85rem 1rem 0.85rem 3rem;
+}
+.password-tips {
+  margin: 0.5rem 0 1rem 3rem;  /* align under the input text, not the icon */
+}
+.password-tips .tip {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}

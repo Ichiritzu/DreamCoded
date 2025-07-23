@@ -54,11 +54,11 @@ const PasswordStrengthMeter = ({ strength }) => {
 // --- Tips for improving password ---
 const getPasswordTips = pw => {
   const tips = [];
-  if (pw.length < 12)           tips.push('Use at least 12 characters');
-  if (!/[A-Z]/.test(pw))        tips.push('Include an uppercase letter');
-  if (!/[a-z]/.test(pw))        tips.push('Include a lowercase letter');
-  if (!/[0-9]/.test(pw))        tips.push('Include a number');
-  if (!/[^A-Za-z0-9]/.test(pw)) tips.push('Include a special symbol');
+  if (pw.length < 12)            tips.push('Use at least 12 characters');
+  if (!/[A-Z]/.test(pw))         tips.push('Include an uppercase letter');
+  if (!/[a-z]/.test(pw))         tips.push('Include a lowercase letter');
+  if (!/[0-9]/.test(pw))         tips.push('Include a number');
+  if (!/[^A-Za-z0-9]/.test(pw))  tips.push('Include a special symbol');
   return tips;
 };
 
@@ -67,7 +67,7 @@ const AuthForm = () => {
   const { showMessage } = useMessage();
   const navigate = useNavigate();
 
-  const [mode, setMode] = useState('login'); // 'login' | 'register' | 'forgot-password'
+  const [mode, setMode] = useState('login'); 
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -82,7 +82,7 @@ const AuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const intervalRef = useRef(null);
 
-  // cooldown timer
+  // Resend cooldown
   const startCooldownTimer = secs => {
     clearInterval(intervalRef.current);
     setCooldown(secs);
@@ -96,12 +96,9 @@ const AuthForm = () => {
       });
     }, 1000);
   };
+  useEffect(() => () => clearInterval(intervalRef.current), []);
 
-  useEffect(() => {
-    return () => clearInterval(intervalRef.current);
-  }, []);
-
-  // smarter strength checker
+  // Strength checker
   const checkPasswordStrength = pw => {
     let rawScore = 0;
     if (pw.length >= 12)       rawScore += 2;
@@ -112,17 +109,11 @@ const AuthForm = () => {
     if (/[0-9]/.test(pw))      rawScore += 1;
     if (/[^A-Za-z0-9]/.test(pw)) rawScore += 1;
     const score = Math.min(rawScore, 4);
-    const textMap = {
-      0: 'Too Short',
-      1: 'Weak',
-      2: 'Medium',
-      3: 'Strong',
-      4: 'Very Strong'
-    };
+    const textMap = { 0: 'Too Short', 1: 'Weak', 2: 'Medium', 3: 'Strong', 4: 'Very Strong' };
     return { score, text: textMap[score] };
   };
 
-  // form validation on register
+  // Simple form validation
   const validateForm = () => {
     const errs = {};
     if (mode === 'register') {
@@ -250,23 +241,23 @@ const AuthForm = () => {
 
       {mode !== 'forgot-password' && (
         <div className="auth-toggle">
-          <button
-            onClick={() => switchMode('login')}
-            disabled={isLoading}
-            className={mode==='login'?'active':''}
-          >Login</button>
-          <button
-            onClick={() => switchMode('register')}
-            disabled={isLoading}
-            className={mode==='register'?'active':''}
-          >Register</button>
+          <button onClick={() => switchMode('login')}
+                  disabled={isLoading}
+                  className={mode==='login'?'active':''}>
+            Login
+          </button>
+          <button onClick={() => switchMode('register')}
+                  disabled={isLoading}
+                  className={mode==='register'?'active':''}>
+            Register
+          </button>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="auth-form" noValidate>
         {mode==='register' && (
           <>
-            <div className="input-group">
+            <div className="input-wrapper">
               <span className="input-icon"><UserIcon/></span>
               <input
                 name="first_name"
@@ -276,7 +267,8 @@ const AuthForm = () => {
                 required disabled={isLoading}
               />
             </div>
-            <div className="input-group">
+
+            <div className="input-wrapper">
               <span className="input-icon"><UserIcon/></span>
               <input
                 name="last_name"
@@ -286,7 +278,8 @@ const AuthForm = () => {
                 disabled={isLoading}
               />
             </div>
-            <div className="input-group">
+
+            <div className="input-wrapper">
               <span className="input-icon"><UserIcon/></span>
               <input
                 name="username"
@@ -295,12 +288,12 @@ const AuthForm = () => {
                 onChange={handleChange}
                 required disabled={isLoading}
               />
-              {errors.username && <span className="error-text">{errors.username}</span>}
             </div>
+            {errors.username && <span className="error-text">{errors.username}</span>}
           </>
         )}
 
-        <div className="input-group">
+        <div className="input-wrapper">
           <span className="input-icon"><MailIcon/></span>
           <input
             type="email"
@@ -314,7 +307,7 @@ const AuthForm = () => {
 
         {mode!=='forgot-password' && (
           <>
-            <div className="input-group">
+            <div className="input-wrapper">
               <span className="input-icon"><LockIcon/></span>
               <input
                 type="password"
@@ -342,11 +335,11 @@ const AuthForm = () => {
         )}
 
         <button type="submit" disabled={isLoading}>
-          {isLoading ? <Loader/> : (
-            mode==='login' ? 'Login'
-              : mode==='register' ? 'Create Account'
-              : 'Send Reset Link'
-          )}
+          {isLoading ? <Loader/> :
+            mode==='login' ? 'Login' :
+            mode==='register' ? 'Create Account' :
+            'Send Reset Link'
+          }
         </button>
       </form>
 
@@ -367,11 +360,9 @@ const AuthForm = () => {
 
       {showResend && (
         <div className="resend-container">
-          <button
-            onClick={handleResendVerification}
-            disabled={isLoading || cooldown>0}
-            className="resend-button"
-          >
+          <button onClick={handleResendVerification}
+                  disabled={isLoading || cooldown>0}
+                  className="resend-button">
             {isLoading
               ? <Loader/>
               : cooldown>0

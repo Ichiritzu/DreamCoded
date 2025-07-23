@@ -305,6 +305,13 @@
   left: 1rem;
   transform: translateY(-50%);
 }
+.error-text {
+  display: block;
+  margin: -0.75rem 0 1rem 0.75rem; /* Pull up slightly, then push down space */
+  color: #ef4444;
+  font-size: 0.8rem;
+}
+
 
 /* ensure your input has left padding for the icon */
 .auth-form input {

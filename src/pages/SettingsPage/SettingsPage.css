@@ -1,178 +1,158 @@
-/* =================================================================
-   1. Main Page Layout
-   ================================================================= */
+/* SettingsPage.css */
+
+/* 1. Page container + grid */
 .settings-page-container {
-    padding: 3rem 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+  padding: 2rem 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: var(--text-primary);
+}
+.settings-page-container > h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.settings-form-wrapper {
-    width: 100%;
-    max-width: 600px;
-    background-color: var(--card-bg);
-    border-radius: 0.75rem;
-    padding: 2.5rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+.settings-grid {
+  display: grid;
+  gap: 1.5rem;
+  /* auto‑fit cards down to 280px wide */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
-.settings-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #374151;
+/* 2. Card common styling */
+.settings-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+}
+.settings-card h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
-.settings-header h1 {
-    font-size: 2.25rem;
-    font-weight: 800;
-    margin: 0;
+/* 3. Form labels & inputs */
+.settings-card label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+.settings-card label input {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  background-color: #2b2b3b;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.settings-card label input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.3);
 }
 
-.settings-header p {
-    color: var(--text-secondary);
-    font-size: 1.125rem;
-    margin-top: 0.5rem;
+/* 4. Avatar preview */
+.avatar-preview-wrapper {
+  width: 100%;
+  padding-top: 100%; /* square */
+  position: relative;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #374151;
+}
+.avatar-preview-wrapper .avatar-preview {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.avatar-placeholder {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
-.settings-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
+/* 5. File input & remove button */
+.settings-card input[type="file"] {
+  margin-bottom: 0.75rem;
+}
+.remove-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--error-color);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+.remove-btn:hover {
+  text-decoration: underline;
 }
 
-/* =================================================================
-   2. Avatar & File Inputs
-   ================================================================= */
-.avatar-preview-section {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0.5rem;
+/* 6. Current / new email */
+.current-email {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+.success-text {
+  color: var(--success-color);
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
 }
 
-.settings-avatar-preview {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 4px solid var(--primary-color);
-    object-fit: cover;
-    background-color: #374151;
+/* 7. Buttons */
+.settings-btn {
+  margin-top: auto;
+  padding: 0.65rem 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.settings-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+.settings-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.form-group.avatar-controls {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    background-color: #282a36;
+/* 8. Error text */
+.error-text {
+  margin-top: 0.5rem;
+  color: var(--error-color);
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+/* 9. Responsive tweaks */
+@media (max-width: 500px) {
+  .settings-card {
     padding: 1rem;
-    border-radius: 0.5rem;
-}
-
-/* Hides the default file input visually but keeps it functional */
-.form-group input[type="file"] {
-    display: none;
-}
-
-/* Styles the <label> to act as a custom button */
-.upload-btn-label {
-    background-color: #4b5563;
-    color: var(--text-primary);
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    text-align: center;
-    flex-grow: 1;
-}
-
-.upload-btn-label:hover {
-    background-color: var(--primary-color);
-    color: #111827;
-}
-
-.remove-avatar-btn {
-    background-color: #44475a;
-    border: 1px solid #6272a4;
-    color: #ff5555; /* A danger red that fits dark themes */
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.remove-avatar-btn:hover {
-    background-color: #ff5555;
-    border-color: #ff5555;
-    color: white;
-}
-
-
-/* =================================================================
-   3. General Form Groups & Inputs
-   ================================================================= */
-.form-group label {
-    font-weight: 700;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    background-color: #374151;
-    border: 1px solid #4b5563;
-    border-radius: 0.5rem;
-    color: var(--text-primary);
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-sizing: border-box;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
-}
-
-.form-group input:disabled {
-    background-color: #2b3341;
-    color: var(--text-secondary);
-    cursor: not-allowed;
-}
-
-.form-group small {
-    font-size: 0.8rem;
-    color: #6b7280;
-    margin-top: 0.25rem;
-}
-
-/* =================================================================
-   4. Submit Button
-   ================================================================= */
-.settings-submit-btn {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 0.9rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    margin-top: 1rem;
-}
-
-.settings-submit-btn:hover:not(:disabled) {
-    background-color: var(--primary-hover);
-}
-
-.settings-submit-btn:disabled {
-    background-color: #4b5563;
-    cursor: not-allowed;
+  }
+  .settings-page-container > h1 {
+    font-size: 2rem;
+  }
 }

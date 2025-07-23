@@ -32,13 +32,13 @@ const ProfileDropdown = ({ user }) => {
   return (
     <div className="profile-dropdown-wrapper" ref={dropdownRef}>
       <button onClick={() => setIsOpen(!isOpen)} className="profile-trigger-btn">
-        <img src={user.avatar_url} alt={user.username} className="user-avatar-header" />
+        <img key={user.avatar_url} src={user.avatar_url} alt={user.username} className="user-avatar-header" />
       </button>
 
       {isOpen && (
         <div className="dropdown-menu">
           <div className="dropdown-user-info">
-            <img src={user.avatar_url} alt={user.username} className="user-avatar-dropdown" />
+            <img key={user.avatar_url + '-dd'} src={user.avatar_url} alt={user.username} className="user-avatar-dropdown" />
             <div className="user-details-dropdown">
               <span className="user-name-dropdown">
                 {user.first_name} {user.last_name}

@@ -46,8 +46,6 @@
    3. Hero Section
    ================================================================= */
 .dc-hero {
-    position: relative;
-    padding: 6rem 1.5rem 8rem;
     text-align: center;
     overflow: hidden;
 }
@@ -385,4 +383,12 @@
 }
 .card-image-link {
     text-decoration: none;
+}
+
+.hero-logo {
+  max-width: 575px;    /* tweak to taste */
+  width: 100%;
+  height: auto;
+  margin: 0 auto 1rem;
+  display: block;
 }

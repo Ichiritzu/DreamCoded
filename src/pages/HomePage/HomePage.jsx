@@ -230,8 +230,12 @@ const HomePage = () => {
             {Array.from({ length: 30 }).map((_, i) => <Star key={i} />)}
           </div>
           <div className="hero-content">
-            <h1 className="dc-title">DreamCoded</h1>
-            <p className="dc-sub">Where digital dreams become interactive reality.</p>
+            <img
+          src="https://dreamcoded.com/assets/images/dreamcoded_full.png"
+          alt="DreamCoded"
+          className="hero-logo"
+        />
+            <h1 className="dc-sub">Where digital dreams become interactive reality.</h1>
           </div>
         </section>
       )}
